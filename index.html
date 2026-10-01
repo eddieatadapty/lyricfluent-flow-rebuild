@@ -1,0 +1,1795 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- flow-rebuild template (Growth Audit, v3: + walkthrough video, phone view/QR, localization, paywall today vs proposed). Replace every double-brace placeholder, everything between
+     the SCREENS markers, and the CONTENT json. Rules that brand-check.py enforces are marked RULE.
+     Reference builds: eddieatadapty.github.io/datacamp-flow-rebuild-v2 · bterzic123.github.io/planner5d-flow-rebuild-v2 -->
+<title>LyricFluent Growth Audit</title>
+<meta name="description" content="Five ideas to turn more LyricFluent users into subscribers, each built into a clickable version of LyricFluent's own onboarding. Prepared by Adapty.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- the APP's font (brand.json fonts, or the closest Google family) + a mono if the app shows code -->
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* BRAND:START — the only place the APP's colours are written as literals. RULE: every value here is
+   copied from brand.json / a sampled pixel of the app's own screens; never "improved". Used only inside the phone. */
+:root{
+  --b-primary:#0e826f;      /* GET STARTED / CONTINUE buttons, progress bar, selected options */
+  --b-primary-ink:#ffffff;
+  --b-bg:#ffffff;           /* every onboarding screen is white */
+  --b-surface:#ffffff;      /* cards and option rows: white with a hairline + shadow */
+  --b-ink:#2a2a2a;
+  --b-ink2:#868686;
+  --b-line:#e6e6e6;         /* progress track, card borders */
+  --b-soft:#f5f5f5;         /* selected genre row, review card */
+  --b-tint:#ebfefd;         /* light teal behind selected / confirmed states */
+  --b-accent2:#14a58d;      /* illustration teal */
+  --b-g1:#9e3640; --b-g2:#374eae; --b-g3:#11627a; --b-g4:#8f36a5; /* genre tiles (Reggaeton, Dance, Regional Mexican, Salsa) */
+  --b-grad:linear-gradient(180deg,#ffffff,#ffffff);
+  --b-radius:6px;
+  --b-pill:6px;
+  --b-font:'Open Sans',-apple-system,system-ui,sans-serif;
+  --b-mono:ui-monospace,monospace;
+}
+/* BRAND:END */
+/* A second app family (e.g. a mono for code) is applied HERE, never in SCREENS css (brand-check allows only
+   var(--b-font) there). Prefix with .scr so it beats the screens' font shorthands, e.g.:
+   .scr .code,.scr .instr code{font-family:var(--b-mono)} */
+
+/* ================= the audit page — Adapty's, not the app's. Light, Apple-style. ================= */
+:root{
+  color-scheme:light;
+  --st-ground:#f5f5f7; --st-card:#ffffff; --st-ink:#1d1d1f; --st-ink2:#6e6e73; --st-ink3:#86868b;
+  --st-hair:rgba(0,0,0,.09); --st-link:#0066cc;
+  --st-accent:#0b5e51;      /* dark brand colour of the APP: buttons, the outcome band */
+  --st-hi:#14a58d;          /* bright brand colour of the APP: outcome numbers on the band, idea dots */
+  --st-mark:rgba(20,165,141,.32); /* --st-hi at ~.5 alpha: the highlighter under impact numbers */
+  --st-font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+html,body{margin:0}
+body{background:var(--st-ground);color:var(--st-ink);font-family:var(--st-font);-webkit-font-smoothing:antialiased;font-size:17px;line-height:1.47}
+.au-wrap{max-width:1080px;margin:0 auto;padding-inline:22px}
+a{color:var(--st-link)}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--st-link);outline-offset:3px;border-radius:6px}
+mark{background:linear-gradient(transparent 62%,var(--st-mark) 62%,var(--st-mark) 92%,transparent 92%);color:inherit;padding:0 .04em}
+
+/* nav */
+.au-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(245,245,247,.8);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--st-hair)}
+.au-nav-in{max-width:1080px;margin:0 auto;padding-inline:22px;height:52px;display:flex;align-items:center;gap:26px}
+.au-brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0}
+.au-brand img{width:26px;height:26px;border-radius:7px;flex:none}
+.au-brand span{font-size:15px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+.au-brand small{font-size:15px;font-weight:400;color:var(--st-ink2)}
+.au-nav a{font-size:13px;color:var(--st-ink);text-decoration:none;opacity:.82}
+.au-nav a:hover{opacity:1}
+@media (max-width:560px){.au-nav a.au-opt{display:none}.au-brand small{display:none}}
+
+/* hero */
+.au-top-hero{text-align:center;padding-top:clamp(56px,9vw,96px);overflow:hidden;position:relative}
+.au-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--st-ink);margin:0 0 14px}
+.au-eyebrow i{width:8px;height:8px;border-radius:50%;background:var(--st-hi);box-shadow:0 0 0 3px var(--st-mark)}
+.au-display{font-size:clamp(60px,12vw,120px);line-height:.98;font-weight:700;letter-spacing:-.05em;margin:0}
+.au-lede{font-size:clamp(23px,3.4vw,34px);line-height:1.16;font-weight:600;letter-spacing:-.022em;max-width:760px;margin:22px auto 0;text-wrap:balance}
+.au-lede span{color:var(--st-ink2)}
+.au-byline{font-size:14px;color:var(--st-ink3);margin:18px 0 0}
+.au-ctas{display:flex;gap:26px;justify-content:center;align-items:center;margin-top:30px;flex-wrap:wrap}
+.au-btn{display:inline-block;background:var(--st-accent);color:#fff;border-radius:980px;padding:12px 23px;font-size:17px;font-weight:500;text-decoration:none;border:0;cursor:pointer}
+.au-btn:hover{filter:brightness(1.25)}
+.au-lnk{background:none;border:0;padding:0;color:var(--st-link);font-size:17px;text-decoration:none;cursor:pointer}
+.au-lnk::after{content:"\00a0›"}
+.au-lnk:hover{text-decoration:underline}
+.au-phones{display:flex;justify-content:center;align-items:flex-start;margin-top:clamp(40px,6vw,64px);height:clamp(300px,52vw,560px)}
+.au-hp{flex:none;border:0;padding:0;background:none;cursor:pointer;width:27%;max-width:290px;margin:0 -2.5%;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.au-hp img{display:block;width:100%;height:auto;filter:drop-shadow(0 28px 50px rgba(0,0,0,.2))}
+.au-hp.au-c{width:31%;max-width:330px;z-index:2}
+.au-hp.au-l{transform:translateY(12%) rotate(-5deg)}
+.au-hp.au-r{transform:translateY(12%) rotate(5deg)}
+.au-hp.au-l:hover{transform:translateY(9%) rotate(-5deg)}.au-hp.au-r:hover{transform:translateY(9%) rotate(5deg)}.au-hp.au-c:hover{transform:translateY(-3%)}
+
+/* sections */
+.au-sec{padding-block:clamp(72px,10vw,120px)}
+.au-sec.au-white{background:var(--st-card)}
+.au-kicker{font-size:15px;font-weight:600;color:var(--st-ink2);margin:0 0 12px}
+.au-h2{font-size:clamp(34px,5.2vw,56px);line-height:1.06;font-weight:700;letter-spacing:-.035em;margin:0;text-wrap:balance}
+.au-h2 span{color:var(--st-ink3)}
+.au-split{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,6vw,80px);align-items:end}
+.au-split p{margin:0;font-size:clamp(17px,1.7vw,21px);line-height:1.45;color:var(--st-ink2);letter-spacing:-.01em}
+.au-split p b{color:var(--st-ink);font-weight:600}
+.au-split p + p{margin-top:16px}
+.au-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:clamp(48px,7vw,80px);border-top:1px solid var(--st-hair)}
+.au-stat{padding:28px 20px 0 0}
+.au-stat b{display:block;font-size:clamp(40px,5.5vw,64px);font-weight:700;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.au-stat span{display:block;font-size:15px;color:var(--st-ink2);margin-top:10px;max-width:22ch}
+.au-notes{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,40px);margin-top:clamp(48px,7vw,72px)}
+.au-note h3{font-size:19px;font-weight:600;letter-spacing:-.015em;margin:0 0 8px}
+.au-note p{margin:0;font-size:15.5px;line-height:1.5;color:var(--st-ink2)}
+.au-note .au-ic{width:36px;height:36px;border-radius:10px;background:var(--st-ground);display:grid;place-items:center;margin-bottom:16px}
+.au-note .au-ic svg{width:19px;height:19px;stroke:var(--st-accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ideas */
+.au-ideas-h{margin-bottom:clamp(32px,5vw,48px)}
+.au-list{background:var(--st-card);border-radius:28px;padding-inline:clamp(20px,4vw,44px)}
+.au-idea{display:grid;grid-template-columns:56px 1fr 220px;gap:20px;align-items:start;padding-block:clamp(26px,3.5vw,36px);border-top:1px solid var(--st-hair)}
+.au-idea:first-child{border-top:0}
+.au-idea .au-num{font-size:15px;font-weight:600;color:var(--st-ink3);font-variant-numeric:tabular-nums;padding-top:6px}
+.au-idea h3{font-size:clamp(21px,2.4vw,26px);line-height:1.2;font-weight:600;letter-spacing:-.022em;margin:0 0 8px}
+.au-idea p{margin:0 0 12px;font-size:17px;line-height:1.5;color:var(--st-ink2);max-width:58ch}
+.au-idea p code{font:600 15px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--st-ink);background:var(--st-ground);padding:2px 7px;border-radius:6px}
+.au-idea .au-lnk{font-size:15px}
+.au-imp{text-align:right}
+.au-imp .au-v{font-size:clamp(30px,3.6vw,40px);font-weight:700;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums;color:var(--st-accent)}
+.au-imp .au-l{font-size:13.5px;color:var(--st-ink2);margin-top:8px}
+.au-band{margin-top:20px;background:var(--st-accent);color:#fff;border-radius:28px;padding:clamp(32px,5vw,56px);display:grid;grid-template-columns:1fr auto;gap:clamp(28px,5vw,64px);align-items:center}
+.au-band .au-k{font-size:15px;font-weight:600;color:rgba(255,255,255,.62);margin:0 0 10px}
+.au-band h3{font-size:clamp(24px,3vw,32px);line-height:1.18;font-weight:600;letter-spacing:-.022em;margin:0;text-wrap:balance}
+.au-band .au-fn{font-size:13px;line-height:1.5;color:rgba(255,255,255,.55);margin:16px 0 0;max-width:52ch}
+.au-nums{display:flex;gap:clamp(28px,4vw,48px)}
+.au-nums small{display:block;font-size:13px;color:rgba(255,255,255,.62)}
+.au-nums b{display:block;font-size:clamp(48px,6.5vw,76px);font-weight:700;letter-spacing:-.045em;line-height:1;color:var(--st-hi);font-variant-numeric:tabular-nums;margin:4px 0 8px}
+.au-nums span{font-size:14px;color:rgba(255,255,255,.8)}
+.au-band .au-btn{background:var(--st-hi);color:var(--st-accent);font-weight:600;margin-top:26px}
+
+/* prototype */
+.au-proto-h{text-align:center;max-width:720px;margin:0 auto}
+.au-proto-h p{font-size:clamp(17px,1.7vw,21px);color:var(--st-ink2);margin:14px 0 0}
+.au-seg{display:flex;gap:4px;justify-content:center;margin:clamp(28px,4vw,40px) auto 0;padding:4px;background:var(--st-ground);border-radius:980px;width:max-content;max-width:100%;overflow-x:auto;scrollbar-width:none}
+.au-seg::-webkit-scrollbar{display:none}
+.au-chip{flex:none;display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--st-ink2);font-size:13.5px;font-weight:500;padding:8px 14px;border-radius:980px;cursor:pointer;white-space:nowrap}
+.au-chip:hover{color:var(--st-ink)}
+.au-chip.on{background:var(--st-card);color:var(--st-ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.au-chip i{font-style:normal;font-size:11px;font-weight:700;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:var(--st-hi);color:var(--st-accent)}
+.au-stage{display:grid;grid-template-columns:auto minmax(0,420px);gap:clamp(32px,6vw,72px);justify-content:center;align-items:center;margin-top:clamp(28px,4vw,44px)}
+.phone{width:390px;height:844px;border-radius:56px;padding:10px;background:#0b0d10;box-shadow:0 0 0 1.5px #3a3d42,0 40px 90px rgba(0,0,0,.25);max-width:calc(100vw - 44px)}
+.phone-in{position:relative;width:100%;height:100%;border-radius:46px;overflow:hidden;background:var(--b-bg)}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#000;z-index:9}
+.sbar{position:absolute;top:0;left:0;right:0;height:52px;display:flex;justify-content:space-between;align-items:center;padding:4px 32px 0;font:600 15px -apple-system,system-ui,sans-serif;color:var(--b-ink);z-index:8;pointer-events:none}
+.au-pn{background:var(--st-ground);border-radius:28px;padding:clamp(26px,3.5vw,38px)}
+.au-pn-k{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--st-ink)}
+.au-pn-k i{width:8px;height:8px;border-radius:50%;background:var(--st-hi);box-shadow:0 0 0 3px var(--st-mark)}
+.au-pn-k.au-ctx{color:var(--st-ink2)}.au-pn-k.au-ctx i{background:var(--st-ink3);box-shadow:none}
+.au-pn-t{font-size:clamp(24px,2.6vw,30px);line-height:1.12;font-weight:700;letter-spacing:-.028em;margin:10px 0 14px;text-wrap:balance}
+.au-pn-h{margin:0;font-size:17px;line-height:1.55;color:var(--st-ink2)}
+.au-pn-h b{color:var(--st-ink);font-weight:600}
+.au-pn-o{margin-top:24px;padding-top:22px;border-top:1px solid var(--st-hair)}
+.au-pn-o .au-lab{font-size:13px;font-weight:600;color:var(--st-ink3)}
+.au-pn-o .au-val{font-size:clamp(38px,4.4vw,50px);font-weight:700;letter-spacing:-.04em;line-height:1.05;color:var(--st-accent);margin-top:6px;font-variant-numeric:tabular-nums}
+.au-pn-o .au-sub{font-size:14px;color:var(--st-ink2);margin-top:4px}
+.au-pn-a{margin:18px 0 0;font-size:14px;line-height:1.5;color:var(--st-ink2)}
+.au-pn-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:28px;padding-top:18px;border-top:1px solid var(--st-hair);font-size:13px;color:var(--st-ink3)}
+.au-pn-nav button{background:var(--st-card);border:0;border-radius:980px;padding:8px 15px;font-size:14px;font-weight:500;color:var(--st-ink);cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.au-pn-nav button:disabled{opacity:.35;cursor:default}
+.au-hint{text-align:center;font-size:14px;color:var(--st-ink3);margin:22px 0 0}
+
+/* footer */
+.au-foot{padding-block:56px 72px;border-top:1px solid var(--st-hair)}
+.au-foot details{border-bottom:1px solid var(--st-hair);padding-bottom:18px}
+.au-foot summary{cursor:pointer;font-size:17px;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.au-foot summary::-webkit-details-marker{display:none}
+.au-foot summary::after{content:"+";font-size:24px;font-weight:300;color:var(--st-ink2)}
+.au-foot details[open] summary::after{content:"−"}
+.au-srcs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 48px;margin-top:18px}
+.au-srcs h4{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--st-ink3);margin:18px 0 6px}
+.au-srcs dl{margin:0}.au-srcs dt{font-size:14.5px;font-weight:600;margin-top:10px}
+.au-srcs dd{margin:3px 0 0;font-size:14px;line-height:1.5;color:var(--st-ink2)}
+.au-fine{font-size:12.5px;line-height:1.6;color:var(--st-ink3);margin:22px 0 0;max-width:80ch}
+.au-cta-line{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-top:36px}
+.au-cta-line p{margin:0;font-size:clamp(19px,2.2vw,24px);font-weight:600;letter-spacing:-.02em;max-width:34ch}
+
+@media (max-width:900px){
+  .au-split,.au-band{grid-template-columns:1fr}
+  .au-notes{grid-template-columns:1fr}
+  .au-idea{grid-template-columns:40px 1fr}
+  .au-imp{grid-column:2;text-align:left;display:flex;align-items:baseline;gap:10px}
+  .au-imp .au-l{margin:0}
+  .au-imp .au-v{white-space:nowrap}
+  .au-stage{grid-template-columns:1fr;justify-items:center}
+  .au-pn{width:100%;max-width:520px}
+  .au-srcs{grid-template-columns:1fr}
+}
+@media (max-width:560px){.au-stats{grid-template-columns:1fr}.au-stat{padding:22px 0 0}.au-nums{flex-direction:column;gap:18px}}
+
+/* ================= extras (audit side): video, language, phone view + QR, paywall today vs proposed, ?tour ================= */
+[hidden]{display:none!important}
+/* the device never scrolls: off-screen slides would otherwise make it scrollable by focus / scrollIntoView */
+.phone-in,.scr{overflow:clip}
+/* hero: walkthrough link */
+.au-play::before{content:"▶";font-size:.72em;margin-right:7px;position:relative;top:-1px}
+/* video dialog */
+.au-vid{border:0;padding:0;background:transparent;max-width:min(1120px,94vw);width:100%;overflow:visible}
+.au-vid::backdrop{background:rgba(0,0,0,.74);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.au-vid-in{background:#000;border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.au-vid video{display:block;width:100%;aspect-ratio:16/9;background:#000}
+.au-vid-bar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 4px 0;font-size:14px}
+.au-vid-bar a{color:#fff;opacity:.85}
+.au-vid-x{background:rgba(255,255,255,.16);border:0;color:#fff;border-radius:980px;padding:8px 16px;font-size:14px;cursor:pointer}
+/* language switch */
+.au-langrow{display:flex;justify-content:center;align-items:center;gap:12px;margin:18px 0 0;font-size:13.5px;color:var(--st-ink2);flex-wrap:wrap}
+.au-lsw{display:inline-flex;gap:2px;padding:3px;background:var(--st-ground);border-radius:980px}
+.au-lsw button{border:0;background:none;padding:6px 13px;border-radius:980px;font-size:13.5px;font-weight:500;color:var(--st-ink2);cursor:pointer;white-space:nowrap}
+.au-lsw button.on{background:var(--st-card);color:var(--st-ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+/* QR card (desktop) / full-screen button (phone) */
+.au-qr{display:flex;align-items:center;gap:18px;margin:26px auto 0;max-width:500px;background:var(--st-ground);border-radius:22px;padding:14px 22px 14px 14px}
+.au-qr img{width:112px;height:112px;border-radius:12px;image-rendering:pixelated;flex:none;background:#fff}
+.au-qr b{display:block;font-size:17px;font-weight:600;letter-spacing:-.01em}
+.au-qr p{margin:4px 0 0;font-size:14.5px;line-height:1.45;color:var(--st-ink2)}
+.au-mobw{display:none;text-align:center;margin-top:22px}
+@media (max-width:900px){.au-qr{display:none}.au-mobw{display:block}}
+/* paywall: today vs proposed */
+.au-cmp{display:grid;grid-template-columns:minmax(0,290px) minmax(0,1fr) minmax(0,290px);gap:clamp(24px,4vw,52px);align-items:center;margin-top:clamp(32px,5vw,52px)}
+.au-cmp figure{margin:0;text-align:center}
+.au-cmp figure img{display:block;width:100%;height:auto;filter:drop-shadow(0 24px 44px rgba(0,0,0,.18))}
+.au-cmp figcaption{margin-top:14px;font-size:15px;font-weight:600}
+.au-cmp figcaption span{color:var(--st-ink2);font-weight:400}
+.au-cmp-go{border:0;padding:0;background:none;cursor:pointer;display:block;width:100%;transition:transform .3s}
+.au-cmp-go:hover{transform:translateY(-4px)}
+.au-chg{list-style:none;margin:0;background:var(--st-card);border-radius:24px;padding:4px clamp(18px,2.4vw,28px)}
+.au-chg li{padding:15px 0;border-top:1px solid var(--st-hair)}
+.au-chg li:first-child{border-top:0}
+.au-chg h4{margin:0 0 7px;font-size:16px;font-weight:600;letter-spacing:-.01em;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.au-chg h4 i{font-style:normal;font-size:12px;font-weight:600;color:var(--st-accent);background:var(--st-mark);border-radius:6px;padding:2px 8px;white-space:nowrap}
+.au-was,.au-now{display:grid;grid-template-columns:78px 1fr;gap:8px;font-size:14.5px;line-height:1.42}
+.au-was{color:var(--st-ink3)}
+.au-now{color:var(--st-ink);margin-top:3px}
+.au-was em,.au-now em{font-style:normal;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding-top:2px}
+.au-now em{color:var(--st-link)}
+.au-kept{margin:22px 0 0;font-size:14px;color:var(--st-ink2);text-align:center}
+@media (max-width:900px){.au-cmp{grid-template-columns:1fr 1fr;gap:18px}.au-chg{grid-column:1 / -1;order:3}.au-was,.au-now{grid-template-columns:70px 1fr}}
+
+/* ?app — the prototype full screen on a real phone, with a bar that opens the idea panel */
+html.appmode,html.appmode body{height:100%;overflow:hidden;background:#000}
+html.appmode .au-nav,html.appmode .au-top-hero,html.appmode #why,html.appmode #ideas,html.appmode #compare,html.appmode .au-foot,
+html.appmode .au-proto-h,html.appmode #prototype .au-langrow,html.appmode #chips,html.appmode .au-hint,html.appmode .au-qr,html.appmode .au-mobw{display:none!important}
+html.appmode #prototype{padding:0;background:#000}
+html.appmode #prototype .au-wrap{padding:0;max-width:none}
+html.appmode .au-stage{display:block;margin:0}
+html.appmode .phone{position:fixed;top:0;left:0;right:0;margin:0 auto;width:min(100%,480px);height:calc(100% - 56px - env(safe-area-inset-bottom,0px));max-width:none;border-radius:0;padding:0;box-shadow:none;background:#000}
+html.appmode .phone-in{border-radius:0}
+html.appmode .island,html.appmode .sbar{display:none}
+html.appmode .scr .s-pad{padding-top:max(58px,calc(env(safe-area-inset-top,0px) + 16px))}
+html.appmode .scr .s-x,html.appmode .scr .s-lang{top:max(54px,calc(env(safe-area-inset-top,0px) + 10px))}
+.au-appbar,.au-scrim{display:none}
+html.appmode .au-appbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:70;height:calc(56px + env(safe-area-inset-bottom,0px));padding:0 12px env(safe-area-inset-bottom,0px) 16px;align-items:center;gap:12px;background:#0b0b0c;border-top:1px solid rgba(255,255,255,.1);color:#fff}
+.au-ab-why{flex:1;min-width:0;display:flex;align-items:center;gap:9px;background:none;border:0;color:#fff;font-size:14px;font-weight:500;text-align:left;cursor:pointer;padding:0}
+.au-ab-why i{width:8px;height:8px;border-radius:50%;background:var(--st-hi);flex:none}
+.au-ab-why span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.au-ab-why em{font-style:normal;color:rgba(255,255,255,.6);margin-left:auto;flex:none;font-size:13px}
+.au-appbar .au-lsw{background:rgba(255,255,255,.12)}
+.au-appbar .au-lsw button{color:rgba(255,255,255,.75);padding:5px 11px}
+.au-appbar .au-lsw button.on{background:#fff;color:#000}
+html.appmode #panel{position:fixed;left:0;right:0;bottom:0;z-index:80;max-width:none;width:auto;margin:0 auto;border-radius:24px 24px 0 0;max-height:78%;overflow:auto;transform:translateY(105%);transition:transform .3s cubic-bezier(.3,.7,.2,1);padding-bottom:calc(26px + env(safe-area-inset-bottom,0px))}
+html.appmode.au-open #panel{transform:none}
+html.appmode.au-open .au-scrim{display:block;position:fixed;inset:0;z-index:75;background:rgba(0,0,0,.5)}
+
+/* ?tour — 1280×720 walkthrough frames (record-video.sh renders them into assets/walkthrough.mp4) */
+.au-tour{display:none}
+html.tourmode,html.tourmode body{overflow:hidden;background:var(--st-ground)}
+html.tourmode body *{visibility:hidden}
+html.tourmode .phone,html.tourmode .phone *,html.tourmode .au-tour,html.tourmode .au-tour *{visibility:visible}
+html.tourmode .phone{position:fixed;left:170px;top:44px;margin:0;transform:scale(.755);transform-origin:0 0;box-shadow:0 0 0 1.5px #3a3d42,0 34px 80px rgba(0,0,0,.22);z-index:5;max-width:none}
+html.tourmode .au-tour{display:block;position:fixed;inset:0;z-index:6;pointer-events:none;color:var(--st-ink)}
+.au-tb{position:absolute;left:590px;top:30px;display:flex;align-items:center;gap:10px;font-size:16px;font-weight:600}
+.au-tb img{width:26px;height:26px;border-radius:7px}
+.au-tb small{font-size:16px;font-weight:400;color:var(--st-ink2)}
+.au-tby{position:absolute;right:48px;top:32px;font-size:14px;color:var(--st-ink3)}
+.au-tcap{position:absolute;left:590px;right:60px;top:50%;transform:translateY(-50%)}
+.au-tk{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:600}
+.au-tk i{width:9px;height:9px;border-radius:50%;background:var(--st-hi);box-shadow:0 0 0 3px var(--st-mark)}
+.au-tk.au-ctx{color:var(--st-ink2)}.au-tk.au-ctx i{background:var(--st-ink3);box-shadow:none}
+.au-tt{font-size:46px;line-height:1.06;font-weight:700;letter-spacing:-.035em;margin:14px 0 14px;text-wrap:balance}
+.au-tl{font-size:23px;line-height:1.36;color:var(--st-ink2);letter-spacing:-.01em;margin:0;max-width:28ch}
+.au-to{margin-top:28px;padding-top:22px;border-top:1px solid var(--st-hair)}
+.au-to small{display:block;font-size:14px;font-weight:600;color:var(--st-ink3)}
+.au-to b{display:inline-block;font-size:62px;font-weight:700;letter-spacing:-.045em;line-height:1.08;color:var(--st-accent);margin-top:4px}
+.au-to span{display:block;font-size:16px;color:var(--st-ink2);margin-top:2px}
+.au-tprog{position:absolute;left:48px;right:48px;bottom:22px;height:4px;border-radius:3px;background:var(--st-hair);overflow:hidden}
+.au-tprog i{display:block;height:100%;background:var(--st-hi)}
+.au-ttap{position:absolute;left:0;top:0;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(255,255,255,.5);box-shadow:0 0 0 2.5px rgba(255,255,255,.9),0 6px 16px rgba(0,0,0,.35);opacity:0}
+.au-tintro,.au-tend{position:absolute;inset:0;background:var(--st-ground);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0}
+.au-tintro .au-lede{margin-top:18px}
+.au-te-h{font-size:46px;line-height:1.08;font-weight:700;letter-spacing:-.035em;margin:0;max-width:18ch;text-wrap:balance}
+.au-te-n{display:flex;gap:64px;margin-top:30px}
+.au-te-n small{display:block;font-size:14px;color:var(--st-ink2)}
+.au-te-n b{display:block;font-size:76px;font-weight:700;letter-spacing:-.045em;line-height:1;color:var(--st-accent);margin:4px 0 6px}
+.au-te-n span{font-size:15px;color:var(--st-ink2)}
+.au-te-q{display:flex;align-items:center;gap:18px;margin-top:34px;background:var(--st-card);border-radius:20px;padding:12px 24px 12px 12px;text-align:left}
+.au-te-q img{width:104px;height:104px;border-radius:10px;image-rendering:pixelated}
+.au-te-q b{display:block;font-size:18px;font-weight:600}
+.au-te-q span{display:block;font-size:15px;color:var(--st-link);margin-top:3px}
+.au-te-f{position:absolute;bottom:44px;left:0;right:0;font-size:13px;color:var(--st-ink3);margin:0}
+
+/* ---------- screen engine (layout only, no colours) ---------- */
+.scr{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--b-bg);color:var(--b-ink);font-family:var(--b-font);
+     transform:translateX(100%);transition:transform .32s cubic-bezier(.3,.7,.2,1);overflow:hidden;text-align:left;line-height:normal;font-size:16px}
+.scr.is-active{transform:none;z-index:2}.scr.is-past{transform:translateX(-28%)}.scr.under{transform:none;z-index:1}
+.scr.sheet{transform:translateY(100%)}.scr.sheet.is-active{transform:none}
+.nofx,.nofx *{transition:none!important}
+.shot .scr{transition:none!important}
+/* ?phone — just the device at (10,10), for shoot.sh and hero-stills.sh (&clear = transparent ground) */
+.phoneonly body{background:#141615}
+.phoneonly.clear body{background:transparent}
+.phoneonly body *{visibility:hidden}
+.phoneonly .phone,.phoneonly .phone *{visibility:visible}
+.phoneonly .phone{position:fixed;top:10px;left:10px;z-index:99;box-shadow:none;max-width:none;margin:0}
+
+/* SCREENS:START — styles for the app's screens. RULE: colours only via var(--b-*), or white/black
+   with alpha (scrims, shadows). RULE: no class name that the audit page above already uses
+   (.hero .btn .chip .list .idea .note .stat .band .num .hint .display .split …) — brand-check refuses collisions. */
+.lf{flex:1;display:flex;flex-direction:column;padding:54px 18px 28px;min-height:0;position:relative;z-index:1}
+.lf-hd{position:relative;display:flex;align-items:center;justify-content:center;height:40px;flex:none}
+.lf-hd b{font:600 17px var(--b-font);letter-spacing:.02em;color:var(--b-ink);opacity:.86}
+.lf-bk{position:absolute;left:-6px;top:6px;background:none;border:0;padding:4px;color:var(--b-ink);cursor:pointer;display:flex}
+.lf-bk svg{width:24px;height:24px;flex:none}
+.lf-pill{position:absolute;right:-2px;top:9px;background:none;border:0;padding:2px 4px;font:400 14px var(--b-font);color:var(--b-ink);cursor:pointer;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.lf-pill i{font-style:normal;font-size:11px}
+.lf-prog{height:7px;border-radius:7px;background:var(--b-line);margin:6px -10px 0;overflow:hidden;flex:none}
+.lf-prog i{display:block;height:100%;background:var(--b-primary);border-radius:7px}
+.lf-wel{font:400 28px/1.2 var(--b-font);text-align:center;margin:20px 0 0;color:var(--b-ink)}
+.lf-art{display:block;width:76%;margin:20px auto 0}
+.lf-tag{font:400 17px var(--b-font);text-align:center;margin:18px 0 0;color:var(--b-ink)}
+.lf-bul{list-style:none;margin:40px 0 0;padding:0 2px;display:flex;flex-direction:column;gap:15px}
+.lf-bul li{display:flex;align-items:center;gap:14px;font:400 14.5px/1.3 var(--b-font);color:var(--b-ink)}
+.lf-bul svg{width:18px;height:18px;flex:none;color:var(--b-primary)}
+.lf-cta{display:block;white-space:nowrap;margin:auto auto 0;min-width:58%;border:0;border-radius:var(--b-pill);background:var(--b-primary);color:var(--b-primary-ink);font:400 17px var(--b-font);letter-spacing:.01em;padding:13px 26px;cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,.28);text-transform:uppercase;flex:none}
+.lf-cta:disabled{opacity:.45;cursor:default}
+.lf-cta.lf-wide{width:78%}
+.lf-link{background:none;border:0;font:400 14px var(--b-font);color:var(--b-primary);text-align:center;margin:16px 0 0;cursor:pointer;padding:0;width:100%}
+.lf-q{font:600 18.5px/1.38 var(--b-font);letter-spacing:.03em;text-align:center;margin:24px 6px 0;color:var(--b-ink)}
+.lf-s{font:400 13.5px/1.45 var(--b-font);letter-spacing:.03em;text-align:center;margin:12px 4px 0;color:var(--b-ink)}
+.lf-grp{font:400 12.5px var(--b-font);letter-spacing:.02em;text-align:center;margin:20px 0 10px;color:var(--b-ink)}
+.lf-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;padding:0 10px}
+.lf-lc{position:relative;text-align:left;background:var(--b-surface);border:1px solid var(--b-line);border-radius:var(--b-radius);padding:9px 10px;cursor:pointer;color:var(--b-ink);font-family:var(--b-font);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.lf-lc b{display:block;font-weight:400;font-size:13.5px}
+.lf-lc small{display:block;font-size:10px;margin-top:2px}
+.lf-lc i{position:absolute;right:8px;top:9px;font-style:normal;font-size:8.5px;border:1px solid var(--b-line);border-radius:4px;padding:2px 3px}
+.lf-lc.on{background:var(--b-primary);color:var(--b-primary-ink);border-color:var(--b-primary)}
+.lf-lc.on i{border-color:rgba(255,255,255,.6)}
+.lf-opts{display:flex;flex-direction:column;gap:12px;margin-top:24px;padding:0 4px}
+.lf-op{background:var(--b-surface);border:1px solid var(--b-line);border-radius:var(--b-radius);padding:11px 12px;font:400 13px var(--b-font);color:var(--b-ink);cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.12);text-align:center}
+.lf-op.on{background:var(--b-primary);border-color:var(--b-primary);color:var(--b-primary-ink)}
+.lf-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 10px;margin-top:24px}
+.lf-tg{background:var(--b-surface);border:1px solid var(--b-line);border-radius:var(--b-radius);padding:9px 12px;font:400 12.5px var(--b-font);color:var(--b-ink);cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.lf-tg.on{background:var(--b-primary);border-color:var(--b-primary);color:var(--b-primary-ink)}
+.lf-gen{display:flex;flex-direction:column;margin:22px -18px 0}
+.lf-gr{display:flex;align-items:center;gap:14px;background:none;border:2px solid transparent;padding:8px 18px;cursor:pointer;font:400 15px var(--b-font);color:var(--b-ink);text-align:left}
+.lf-gr.on{background:var(--b-soft);border-color:var(--b-line)}
+.lf-gt{width:64px;height:64px;flex:none;display:grid;place-items:center;font:700 9px/1.2 var(--b-font);letter-spacing:.04em;color:var(--b-primary-ink);text-transform:uppercase;text-align:center;padding:4px}
+.lf-g1{background:var(--b-g1)}.lf-g2{background:var(--b-g2)}.lf-g3{background:var(--b-g3)}.lf-g4{background:var(--b-g4)}
+.lf-done{align-self:center;margin-top:18px;display:inline-flex;align-items:center;gap:6px;background:var(--b-tint);color:var(--b-primary);font:600 12.5px var(--b-font);border-radius:999px;padding:6px 12px}
+.lf-chart{margin:18px -8px 0;background:var(--b-surface);border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:12px 10px 12px}
+.lf-ch-h{display:flex;justify-content:space-between;font:400 11.5px var(--b-font);color:var(--b-ink)}
+.lf-bars{display:flex;align-items:flex-end;gap:5px;height:150px;margin-top:6px;border-bottom:1px solid var(--b-line)}
+.lf-bars div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.lf-bars span{font:400 8.5px var(--b-font);color:var(--b-ink);margin-bottom:3px}
+.lf-bars i{display:block;width:100%;background:var(--b-primary);border-radius:3px 3px 0 0}
+.lf-ch-f{font:400 11.5px var(--b-font);color:var(--b-ink);margin:10px 0 0}
+.lf-note{font:400 14px/1.45 var(--b-font);text-align:center;color:var(--b-ink);margin:18px 6px 0}
+.lf-steps{display:flex;flex-direction:column;gap:20px;margin-top:22px;padding:0 6px}
+.lf-st b{display:flex;align-items:center;gap:6px;font:400 15px var(--b-font);color:var(--b-ink)}
+.lf-st b em{font-style:normal;color:var(--b-primary)}
+.lf-st b svg{width:17px;height:17px;flex:none;color:var(--b-primary)}
+.lf-st p{margin:6px 0 0 18px;font:400 13px var(--b-font);color:var(--b-ink)}
+.lf-st i{display:block;height:7px;border-radius:7px;background:var(--b-primary);margin-top:10px}
+.lf-sum{margin:22px 6px 0;border:1.5px solid var(--b-primary);border-radius:10px;padding:12px 14px;background:var(--b-tint)}
+.lf-sum small{display:block;font:600 11px var(--b-font);letter-spacing:.06em;text-transform:uppercase;color:var(--b-primary)}
+.lf-sum p{margin:5px 0 0;font:600 16px/1.35 var(--b-font);color:var(--b-ink)}
+.lf-ph{font:600 22px/1.28 var(--b-font);text-align:center;margin:18px 6px 0;color:var(--b-ink)}
+.lf-rate{display:flex;flex-direction:column;align-items:center;margin-top:16px}
+.lf-stars{color:var(--b-primary);font-size:19px;letter-spacing:3px;line-height:1}
+.lf-rate p{margin:6px 0 0;font:400 14px var(--b-font);color:var(--b-ink)}
+.lf-rev{margin:16px 0 0;background:var(--b-soft);border-radius:10px;padding:10px 14px}
+.lf-rev p{margin:0;font:400 14.5px/1.4 var(--b-font);color:var(--b-ink)}
+.lf-rev small{display:block;margin-top:4px;font:400 11px var(--b-font);color:var(--b-ink2)}
+.lf-pb{list-style:none;margin:20px 0 0;padding:0 2px;display:flex;flex-direction:column;gap:12px}
+.lf-pb li{display:flex;align-items:center;gap:12px;font:400 14.5px/1.3 var(--b-font);color:var(--b-ink)}
+.lf-pb svg{width:16px;height:16px;flex:none;color:var(--b-primary)}
+.lf-yr{position:relative;display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:26px;background:var(--b-surface);border:1.5px solid var(--b-primary);border-radius:var(--b-radius);padding:11px 14px;cursor:pointer;text-align:left;font-family:var(--b-font);color:var(--b-ink)}
+.lf-yr div{display:flex;flex-direction:column;gap:3px}
+.lf-yr b{font:400 16px var(--b-font);letter-spacing:.04em}
+.lf-yr div > span{font:400 15px var(--b-font);letter-spacing:.04em}
+.lf-yr div > span small{font-size:12px}
+.lf-yr em{font-style:normal;font:400 12px var(--b-font);color:var(--b-primary)}
+.lf-yr svg{width:20px;height:20px;flex:none;color:var(--b-primary)}
+.lf-save{position:absolute;top:-10px;right:12px;background:var(--b-primary);color:var(--b-primary-ink);font:700 10.5px var(--b-font);letter-spacing:.05em;padding:3px 8px;border-radius:4px}
+.lf-tl{display:flex;gap:12px;margin:16px 0 0;padding:0 2px}
+.lf-tl div{flex:1;border-top:3px solid var(--b-primary);padding-top:6px}
+.lf-tl div + div{border-top-color:var(--b-line)}
+.lf-tl b{display:block;font:600 12.5px var(--b-font);color:var(--b-ink)}
+.lf-tl span{display:block;font:400 12px/1.4 var(--b-font);color:var(--b-ink);margin-top:2px}
+.lf-strip{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:18px;font:400 14px var(--b-font);color:var(--b-ink)}
+.lf-strip i{font-style:normal;color:var(--b-primary)}
+.lf-strip b{font-weight:600}
+.lf-pl{position:relative;display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:16px;background:var(--b-surface);border:1px solid var(--b-primary);border-radius:var(--b-radius);padding:14px 16px;cursor:pointer;text-align:left;font-family:var(--b-font);color:var(--b-ink)}
+.lf-pl.on{border-width:2.5px;padding:12.5px 14.5px;background:var(--b-tint)}
+.lf-pl div{display:flex;flex-direction:column;gap:5px}
+.lf-pl b{font:400 15.5px var(--b-font);letter-spacing:.04em}
+.lf-pl div > span{font:400 15px var(--b-font);letter-spacing:.04em}
+.lf-pl div > span small{font-size:12px}
+.lf-pl em{font-style:normal;font:400 12.5px var(--b-font);color:var(--b-primary)}
+.lf-pl em.lf-mute{color:var(--b-ink2)}
+.lf-pl svg{width:20px;height:20px;flex:none;color:var(--b-primary)}
+.lf-rs{background:none;border:0;font:400 14px var(--b-font);letter-spacing:.08em;color:var(--b-primary);margin:26px auto 0;display:block;cursor:pointer}
+.lf-legal{font:400 12px/1.5 var(--b-font);color:var(--b-ink);text-align:center;margin:12px 0 0}
+.lf-sh{flex:1;display:flex;flex-direction:column;margin-top:120px;background:var(--b-surface);border-radius:22px 22px 0 0;box-shadow:0 -6px 30px rgba(0,0,0,.18);padding:12px 22px 30px;position:relative;z-index:1}
+.lf-grab{width:40px;height:5px;border-radius:5px;background:var(--b-line);margin:0 auto}
+.lf-x{position:absolute;top:16px;right:16px;background:none;border:0;font:400 20px var(--b-font);color:var(--b-ink);cursor:pointer;padding:4px}
+.lf-k{font:600 12px var(--b-font);letter-spacing:.08em;text-transform:uppercase;color:var(--b-primary);text-align:center;margin:26px 0 0}
+.lf-oh{font:600 23px/1.3 var(--b-font);text-align:center;margin:10px 4px 0;color:var(--b-ink)}
+.lf-big{text-align:center;margin-top:26px}
+.lf-big b{display:block;font:700 46px var(--b-font);color:var(--b-primary);letter-spacing:-.01em;white-space:nowrap}
+.lf-big > span{display:block;font:400 14px var(--b-font);color:var(--b-ink);margin-top:2px}
+.lf-big > s{display:block;font:400 13px var(--b-font);color:var(--b-ink2);margin-top:10px}
+.lf-oc{margin-top:28px;border:1px solid var(--b-line);border-radius:10px;padding:12px 14px;font:400 13.5px/1.45 var(--b-font);color:var(--b-ink);text-align:center}
+.lf-ok{display:flex;align-items:center;gap:10px;margin-top:20px;background:var(--b-tint);border-radius:10px;padding:11px 14px}
+.lf-ok svg{width:22px;height:22px;flex:none;color:var(--b-primary)}
+.lf-ok b{display:block;font:600 14.5px var(--b-font);color:var(--b-ink)}
+.lf-ok span{display:block;font:400 12.5px var(--b-font);color:var(--b-ink);margin-top:1px}
+.lf-ch{font:600 21px/1.3 var(--b-font);text-align:center;margin:30px 0 0;color:var(--b-ink)}
+.lf-sso{display:flex;flex-direction:column;gap:14px;margin-top:30px}
+.lf-sso button{background:var(--b-surface);border:1px solid var(--b-ink);border-radius:999px;padding:13px;font:500 15px var(--b-font);color:var(--b-ink);cursor:pointer}
+.lf-fine{font:400 11.5px/1.5 var(--b-font);color:var(--b-ink);text-align:center;margin:auto 10px 0}
+.lf-fine u{color:var(--b-primary);text-decoration:none}
+/* today: their paywall, rebuilt as recorded */
+.lf-tart{display:block;width:72%;margin:30px auto 0}
+.lf-tr{display:flex;flex-direction:column;align-items:center;margin-top:30px}
+.lf-tr .lf-stars{font-size:22px}
+.lf-tr p{margin:8px 0 0;font:400 14px var(--b-font);color:var(--b-ink)}
+.lf-tb{list-style:none;margin:28px 0 0;padding:0 2px;display:flex;flex-direction:column;gap:14px}
+.lf-tb li{display:flex;align-items:center;gap:14px;font:400 14px/1.3 var(--b-font);color:var(--b-ink)}
+.lf-tb svg{width:17px;height:17px;flex:none;color:var(--b-primary)}
+/* SCREENS:END */
+</style>
+</head>
+<body>
+
+<nav class="au-nav" aria-label="Sections">
+  <div class="au-nav-in">
+    <div class="au-brand">
+      <img src="assets/brand/appstore-icon.jpg" alt="">
+      <span>Growth Audit <small>· LyricFluent</small></span>
+    </div>
+    <a class="au-opt" href="#why">Why this</a>
+    <a href="#ideas">Five ideas</a>
+    <a href="#prototype">Prototype</a>
+    <a class="au-opt" href="#compare" id="navCompare" hidden>Paywall</a>
+  </div>
+</nav>
+
+<header class="au-top-hero" id="top">
+  <div class="au-wrap">
+    <p class="au-eyebrow"><i></i>Growth Audit · October 2026</p>
+    <h1 class="au-display">LyricFluent</h1>
+    <p class="au-lede">Five ideas to turn more learners into subscribers. <span>Each one built into your own onboarding, so you can tap through it.</span></p>
+    <p class="au-byline">Prepared by Adapty for the LyricFluent team</p>
+    <div class="au-ctas">
+      <a class="au-btn" href="#ideas">See the five ideas</a>
+      <a class="au-lnk" href="#prototype">Open the prototype</a>
+      <button type="button" class="au-lnk au-play" id="heroVideo" hidden>Watch the 30-second walkthrough</button>
+    </div>
+  </div>
+  <!-- filled from CONTENT.hero: three screen ids → assets/hero/<id>.png (make them with hero-stills.sh) -->
+  <div class="au-phones" id="heroPhones" aria-label="Three screens from the prototype"></div>
+</header>
+
+<section class="au-sec au-white" id="why">
+  <div class="au-wrap">
+    <div class="au-split">
+      <div>
+        <p class="au-kicker">Why you’re seeing this</p>
+        <h2 class="au-h2">30,000 subscription apps taught us what moves conversion. <span>Here’s what we’d test first at LyricFluent.</span></h2>
+      </div>
+      <div>
+        <p>Adapty runs subscriptions for <b>more than 30,000 apps</b>, so we see which onboarding and paywall changes lift revenue across the whole market, not just inside one app.</p>
+        <p>We pointed that at LyricFluent. We took <b>your own screens, copy and prices</b> from your live iOS flow and App Store listing, and rebuilt the path from install to paywall around the five ideas with the most potential.</p>
+      </div>
+    </div>
+    <div class="au-stats">
+      <div class="au-stat"><b>30,000+</b><span>apps run their subscriptions on Adapty</span></div>
+      <div class="au-stat"><b>5</b><span>ideas, each built as a working screen</span></div>
+      <div class="au-stat"><b>0</b><span>changes to your art direction</span></div>
+    </div>
+    <div class="au-notes">
+      <div class="au-note">
+        <div class="au-ic"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/></svg></div>
+        <h3>Five ideas, not fifteen</h3>
+        <p>We’re not proposing to rebuild every screen. These are the changes with the highest potential, ranked by what we’d test first.</p>
+      </div>
+      <div class="au-note">
+        <div class="au-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17"/></svg></div>
+        <h3>Your design, not ours</h3>
+        <p>Every colour, control and price in the prototype is LyricFluent’s. We changed the order and what gets shown.</p>
+      </div>
+      <div class="au-note">
+        <div class="au-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13A1.5 1.5 0 0 1 5.5 4H15"/></svg></div>
+        <h3>We hope you haven’t tried these yet</h3>
+        <p>We work from the outside, so we can’t see your test history. If you’ve already run one of these, tell us and we’ll go deeper on the rest.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="au-sec" id="ideas">
+  <div class="au-wrap">
+    <div class="au-ideas-h">
+      <p class="au-kicker">The shortlist</p>
+      <h2 class="au-h2">Five ideas. <span>Ranked by what we’d test first.</span></h2>
+    </div>
+    <div class="au-list" id="ideaList"></div>
+    <div class="au-band">
+      <div>
+        <p class="au-k">Potential outcome, based on Adapty data</p>
+        <h3>Together they work on three moments: what you do with their answers, how fast the lesson reaches the price, and what happens when someone says no.</h3>
+        <p class="au-fn" id="bandFn"></p>
+        <a class="au-btn" href="#prototype">Tap through the prototype</a>
+      </div>
+      <div class="au-nums" id="bandNums"></div>
+    </div>
+  </div>
+</section>
+
+<section class="au-sec au-white" id="prototype">
+  <div class="au-wrap">
+    <div class="au-proto-h">
+      <p class="au-kicker">The prototype</p>
+      <h2 class="au-h2">Every idea, inside your own onboarding.</h2>
+      <p>Tap through it like a new user, or jump straight to an idea. Green numbers mark the screens that carry one.</p>
+    </div>
+    <div class="au-langrow" id="langRow" hidden><span>Prototype language</span><div class="au-lsw" id="langSw" role="group" aria-label="Prototype language"></div></div>
+    <div class="au-seg" id="chips" role="tablist" aria-label="Screens"></div>
+    <div class="au-stage">
+      <div class="phone"><div class="phone-in">
+        <div class="island"></div>
+        <div class="sbar"><span>9:41</span><span>●●● ▮</span></div>
+
+<!-- SCREENS:START — one section.scr[data-id=ID] per screen, in flow order. Only the screens an idea lands on,
+     plus the context needed to read the flow (~8–10). Wiring: data-go="<id>" · data-back · data-pick="key:value"
+     (+ data-advance="<id>") · data-toggle="key:value" · data-bind="key" / "label:key" / "count:key" ·
+     data-requires="key" · data-show="key:value" · data-input="key" · class="scr sheet" slides up (offer paywall).
+     RULE: images only from assets/ (their app, their site, App Store) — never stock, never hotlinked.
+     Extras: data-t="key" = translatable (markup is CONTENT.langs[0]; other languages in CONTENT.i18n) — keep data-t on
+     leaf-ish elements, never on an element that also carries data-bind/data-pick/data-show;
+     data-langtoggle cycles the language (their own language pill); data-aside keeps a screen out of the flow
+     (the paywall TODAY, rendered only for the side-by-side still). -->
+
+<section class="scr" data-id="welcome">
+  <div class="lf">
+    <div class="lf-hd"><button class="lf-bk" data-back aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15.5 4 7.5 12l8 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><b data-t="hd">GET STARTED</b><button class="lf-pill" data-langtoggle aria-label="Language"><span data-bind="lang"></span><i>▼</i></button></div>
+    <div class="lf-prog"><i style="width:7%"></i></div>
+    <h1 class="lf-wel" data-t="w_h">Welcome to LyricFluent</h1>
+    <img class="lf-art" src="assets/crop/globe-music.png" alt="">
+    <p class="lf-tag" data-t="w_tag">Where language meets music</p>
+    <ul class="lf-bul">
+      <li><svg viewBox="0 0 24 24"><path d="M9 18V6l11-2v12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="2.6" fill="currentColor"/><circle cx="17.5" cy="16" r="2.6" fill="currentColor"/></svg><span data-t="w_b1">Learn languages with music you love</span></li>
+      <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="currentColor"/><path d="M8 6c2 1 1 3 3 3.5s1 3-1 3.5-1 3 1 4.5M15 5c-1 2 1 3 2.5 3M17 14c-1.5 0-2 1.5-1 3" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg><span data-t="w_b2">Spanish, French, Portuguese, English, 7 more</span></li>
+      <li><svg viewBox="0 0 24 24"><path d="M11 4c-2-1.5-5-.5-5.5 2C3 6.5 2.5 9.5 4 11c-1.5 2 0 5 2 5.5 0 2.5 3 4 5 2.5zM13 4c2-1.5 5-.5 5.5 2 2.5.5 3 3.5 1.5 5 1.5 2 0 5-2 5.5 0 2.5-3 4-5 2.5z" fill="currentColor"/></svg><span data-t="w_b3">Understand real slang with songs</span></li>
+      <li><svg viewBox="0 0 24 24"><path d="M3 5h12a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H8l-4 3v-3H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" fill="currentColor"/><path d="M19 9h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-1v3l-4-3h-5a2 2 0 0 1-2-2" fill="currentColor"/></svg><span data-t="w_b4">Sing your way to confident speaking</span></li>
+      <li><svg viewBox="0 0 24 24"><path d="M20 2l2 2-5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M14 9.5c-1.5-1-3.5-.5-4 1-.4 1.2-1.5 1.3-2.6 1.4-2.6.3-4 3.4-1.8 6 2.3 2.6 5.6 1.4 6-1.2.1-1 .2-2.1 1.4-2.5 1.5-.6 2-2.6 1-4.2z" fill="currentColor"/></svg><span data-t="w_b5">Find your next favorite artist</span></li>
+    </ul>
+    <button class="lf-cta" data-go="lang"><span data-t="w_cta">GET STARTED</span></button>
+    <button class="lf-link"><span data-t="w_si">Already have an account? Sign in</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="lang">
+  <div class="lf">
+    <div class="lf-hd"><button class="lf-bk" data-back aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15.5 4 7.5 12l8 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><b data-t="hd">GET STARTED</b><button class="lf-pill" data-langtoggle aria-label="Language"><span data-bind="lang"></span><i>▼</i></button></div>
+    <div class="lf-prog"><i style="width:14%"></i></div>
+    <h1 class="lf-q" data-t="l_h">What language would you like to learn?</h1>
+    <p class="lf-s" data-t="l_s">Music makes it fun!</p>
+    <div data-show="lang:en">
+      <p class="lf-grp">For English Speakers</p>
+      <div class="lf-grid">
+        <button class="lf-lc" data-pick="target:es"><b>Spanish</b><small>(7477 songs)</small><i>ES</i></button>
+        <button class="lf-lc" data-pick="target:fr"><b>French</b><small>(2039 songs)</small><i>FR</i></button>
+        <button class="lf-lc" data-pick="target:pt"><b>Portuguese</b><small>(1765 songs)</small><i>PT</i></button>
+        <button class="lf-lc" data-pick="target:it"><b>Italian</b><small>(940 songs)</small><i>IT</i></button>
+        <button class="lf-lc" data-pick="target:de"><b>German</b><small>(631 songs)</small><i>DE</i></button>
+        <button class="lf-lc" data-pick="target:ko"><b>Korean</b><small>(114 songs)</small><i>KO</i></button>
+        <button class="lf-lc" data-pick="target:ru"><b>Russian</b><small>(134 songs)</small><i>RU</i></button>
+        <button class="lf-lc" data-pick="target:nl"><b>Dutch</b><small>(299 songs)</small><i>NL</i></button>
+      </div>
+    </div>
+    <div data-show="lang:es">
+      <p class="lf-grp">Para hispanohablantes</p>
+      <div class="lf-grid">
+        <button class="lf-lc" data-pick="target:en"><b>Inglés</b><small>(5294 canciones)</small><i>EN</i></button>
+      </div>
+    </div>
+    <button class="lf-cta" data-go="level"><span data-t="cont">CONTINUE</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="level">
+  <div class="lf">
+    <div class="lf-hd"><button class="lf-bk" data-back aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15.5 4 7.5 12l8 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><b data-t="hd">GET STARTED</b></div>
+    <div class="lf-prog"><i style="width:22%"></i></div>
+    <h1 class="lf-q" data-t="lv_h">How much <span data-bind="label:target"></span> do you know?</h1>
+    <p class="lf-s" data-t="lv_s">Just starting, intermediate or a karaoke pro?</p>
+    <div class="lf-opts">
+      <button class="lf-op" data-pick="level:a1" data-advance="goal"><span data-t="lv1">I'm new to <span data-bind="label:target"></span> [A1]</span></button>
+      <button class="lf-op" data-pick="level:a2" data-advance="goal"><span data-t="lv2">I know some common words [A2]</span></button>
+      <button class="lf-op" data-pick="level:b1" data-advance="goal"><span data-t="lv3">I can have basic conversations [B1/B2]</span></button>
+      <button class="lf-op" data-pick="level:c1" data-advance="goal"><span data-t="lv4">I can talk about various topics [C1/C2]</span></button>
+    </div>
+    <button class="lf-cta" data-go="goal"><span data-t="cont">CONTINUE</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="goal">
+  <div class="lf">
+    <div class="lf-hd"><button class="lf-bk" data-back aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15.5 4 7.5 12l8 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><b data-t="hd">GET STARTED</b></div>
+    <div class="lf-prog"><i style="width:30%"></i></div>
+    <h1 class="lf-q" data-t="go_h">What's your motivation to learn <span data-bind="label:target"></span>?</h1>
+    <p class="lf-s" data-t="go_s">This helps us personalize your journey</p>
+    <div class="lf-tags">
+      <button class="lf-tg" data-toggle="goal:travel"><span data-t="g_travel">Travel</span></button>
+      <button class="lf-tg" data-toggle="goal:abroad"><span data-t="g_abroad">Living Abroad</span></button>
+      <button class="lf-tg" data-toggle="goal:fun"><span data-t="g_fun">Fun</span></button>
+      <button class="lf-tg" data-toggle="goal:culture"><span data-t="g_culture">Culture</span></button>
+      <button class="lf-tg" data-toggle="goal:career"><span data-t="g_career">Career</span></button>
+      <button class="lf-tg" data-toggle="goal:education"><span data-t="g_education">Education</span></button>
+      <button class="lf-tg" data-toggle="goal:family"><span data-t="g_family">Family/Friends</span></button>
+      <button class="lf-tg" data-toggle="goal:relationship"><span data-t="g_relationship">Relationship</span></button>
+      <button class="lf-tg" data-toggle="goal:brain"><span data-t="g_brain">Brain Training</span></button>
+      <button class="lf-tg" data-toggle="goal:curiosity"><span data-t="g_curiosity">Curiosity</span></button>
+      <button class="lf-tg" data-toggle="goal:other"><span data-t="g_other">Other</span></button>
+    </div>
+    <button class="lf-cta" data-go="genre" data-requires="goal"><span data-t="cont">CONTINUE</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="genre">
+  <div class="lf">
+    <div class="lf-hd"><button class="lf-bk" data-back aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15.5 4 7.5 12l8 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><b data-t="hd">GET STARTED</b></div>
+    <div class="lf-prog"><i style="width:38%"></i></div>
+    <h1 class="lf-q" data-t="ge_h">Select a genre for a sample lesson</h1>
+    <div class="lf-gen">
+      <button class="lf-gr" data-pick="genre:g1"><span class="lf-gt lf-g1"><span data-t="gt_g1">REGGAETON</span></span><span data-t="gn_g1">Reggaeton</span></button>
+      <button class="lf-gr" data-pick="genre:g2"><span class="lf-gt lf-g2"><span data-t="gt_g2">DANCE</span></span><span data-t="gn_g2">Dance</span></button>
+      <button class="lf-gr" data-pick="genre:g3"><span class="lf-gt lf-g3"><span data-t="gt_g3">REGIONAL MEXICAN</span></span><span data-t="gn_g3">Regional Mexican</span></button>
+      <button class="lf-gr" data-pick="genre:g4"><span class="lf-gt lf-g4"><span data-t="gt_g4">SALSA</span></span><span data-t="gn_g4">Salsa</span></button>
+    </div>
+    <button class="lf-cta" data-go="progress"><span data-t="cont">CONTINUE</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="progress">
+  <div class="lf">
+    <div class="lf-hd"><button class="lf-bk" data-back aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15.5 4 7.5 12l8 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><b data-t="hd">GET STARTED</b></div>
+    <div class="lf-prog"><i style="width:78%"></i></div>
+    <span class="lf-done">✓ <span data-t="pr_done">First lesson complete</span></span>
+    <h1 class="lf-q" data-t="pr_h">Your Potential Progress</h1>
+    <p class="lf-s" data-t="pr_s">Based on your answers, here is what you could achieve</p>
+    <div class="lf-chart">
+      <div class="lf-ch-h"><span data-t="pr_l">New words learned</span><span data-t="pr_r">Next 12 weeks</span></div>
+      <div class="lf-bars"><div><span>100</span><i style="height:15%"></i></div><div><span>185</span><i style="height:28%"></i></div><div><span>257</span><i style="height:38%"></i></div><div><span>318</span><i style="height:47%"></i></div><div><span>370</span><i style="height:55%"></i></div><div><span>414</span><i style="height:62%"></i></div><div><span>451</span><i style="height:67%"></i></div><div><span>482</span><i style="height:72%"></i></div><div><span>508</span><i style="height:76%"></i></div><div><span>530</span><i style="height:79%"></i></div><div><span>549</span><i style="height:82%"></i></div><div><span>565</span><i style="height:84%"></i></div></div>
+      <p class="lf-ch-f" data-t="pr_f">Estimated learning rate by memorizing 1 song per week</p>
+    </div>
+    <p class="lf-note" data-t="pr_n">Memorize the lyrics and their translation to lock these words in</p>
+    <button class="lf-cta" data-go="plan"><span data-t="cont">CONTINUE</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="plan">
+  <div class="lf">
+    <div class="lf-hd"><button class="lf-bk" data-back aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15.5 4 7.5 12l8 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><b data-t="hd">GET STARTED</b></div>
+    <div class="lf-prog"><i style="width:92%"></i></div>
+    <h1 class="lf-q" data-t="pl_h">Your Personalised Plan</h1>
+    <p class="lf-s" data-t="pl_s">Building your learning plan</p>
+    <div class="lf-steps">
+      <div class="lf-st"><b><em>1.</em><span data-t="pl_1">Saving your preferences</span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7.5 12.3l3 3 6-6.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></b><p><span data-t="pl_lv">Level:</span> <span data-bind="label:level"></span>, <span data-bind="label:genre"></span></p><i></i></div>
+      <div class="lf-st"><b><em>2.</em><span data-t="pl_2">Getting your song recommendations</span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7.5 12.3l3 3 6-6.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></b><p id="planSongs"></p><i></i></div>
+      <div class="lf-st"><b><em>3.</em><span data-t="pl_3">Preparing your learning plan</span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7.5 12.3l3 3 6-6.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></b><p><span data-t="pl_3d">Done!</span></p><i></i></div>
+    </div>
+    <div class="lf-sum"><small><span data-t="pl_k">Your plan</span></small><p id="planSum"></p></div>
+    <p class="lf-note" data-t="pl_r">Your personalised plan is ready. Let's go!</p>
+    <button class="lf-cta" data-go="paywall"><span data-t="cont">CONTINUE</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="paywall">
+  <div class="lf">
+    <div class="lf-hd"><button class="lf-bk" data-go="offer" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M15.5 4 7.5 12l8 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><b data-t="pw_hd">TRY PREMIUM</b></div>
+    <h1 class="lf-ph" id="pwHead"></h1>
+    <div class="lf-rate"><span class="lf-stars">★★★★★</span><p data-t="pw_rate">Rated 4.9 · 3K ratings on the App Store</p></div>
+    <div class="lf-rev"><p data-t="pw_rev">“Replaced doom scrolling with something I enjoy and learn from.”</p><small data-t="pw_revby">App Store review, April 2026</small></div>
+    <ul class="lf-pb">
+      <li><svg viewBox="0 0 24 24"><path d="M9 18V6l11-2v12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="2.6" fill="currentColor"/><circle cx="17.5" cy="16" r="2.6" fill="currentColor"/></svg><span data-t="pw_b1">Learn <span data-bind="label:target"></span> with music you love</span></li>
+      <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="currentColor"/><path d="M8 6c2 1 1 3 3 3.5s1 3-1 3.5-1 3 1 4.5M15 5c-1 2 1 3 2.5 3M17 14c-1.5 0-2 1.5-1 3" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg><span data-t="pw_b2">Unlimited learning and all languages included</span></li>
+      <li><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="currentColor"/><path d="M7.5 12.3l3 3 6-6.4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-t="pw_b3">Easy to cancel anytime, no strings attached</span></li>
+    </ul>
+    <button class="lf-yr" data-go="plans"><span class="lf-save"><span data-t="pw_save">SAVE 66%</span></span><div><b><span data-t="pw_yr">Yearly Plan</span></b><em><span data-t="pw_tr">7 Days Free Trial</span></em><span><span data-t="pw_pr">$59.99 <small>($5.00 per month)</small></span></span></div><svg viewBox="0 0 24 24"><path d="M9 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <div class="lf-tl">
+      <div><b><span data-t="pw_t1">Today</span></b><span data-t="pw_t1d">Every song and language, nothing to pay</span></div>
+      <div><b><span data-t="pw_t2">Day 7</span></b><span data-t="pw_t2d">$59.99 for the year, unless you cancel before</span></div>
+    </div>
+    <button class="lf-cta lf-wide" style="margin-top:auto" data-go="signup"><span data-t="pw_cta">START MY FREE TRIAL</span></button>
+    <button class="lf-link" style="margin-top:12px" data-go="plans"><span data-t="pw_all">VIEW ALL PLANS</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="plans">
+  <div class="lf">
+    <div class="lf-hd"><button class="lf-bk" data-go="paywall" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15.5 4 7.5 12l8 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><b data-t="pw_hd">TRY PREMIUM</b></div>
+    <div class="lf-strip"><i>★</i><span data-t="ps_r"><b>4.9</b> · 3K ratings</span><span>·</span><span id="plGoal"></span></div>
+    <button class="lf-pl" data-pick="plan:year" style="margin-top:22px"><span class="lf-save"><span data-t="pw_save">SAVE 66%</span></span><div><b><span data-t="pw_yr">Yearly Plan</span></b><em><span data-t="pw_tr">7 Days Free Trial</span></em><span><span data-t="pw_pr">$59.99 <small>($5.00 per month)</small></span></span><em class="lf-mute"><span data-t="ps_vs">vs $14.99 a month on Monthly</span></em></div><svg viewBox="0 0 24 24"><path d="M9 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button class="lf-pl" data-pick="plan:month"><div><b><span data-t="ps_mo">Monthly Plan</span></b><span><span data-t="ps_mp">$14.99</span></span></div><svg viewBox="0 0 24 24"><path d="M9 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <div class="lf-tl" style="margin-top:18px" data-show="plan:year">
+      <div><b><span data-t="pw_t1">Today</span></b><span data-t="pw_t1d">Every song and language, nothing to pay</span></div>
+      <div><b><span data-t="pw_t2">Day 7</span></b><span data-t="pw_t2d">$59.99 for the year, unless you cancel before</span></div>
+    </div>
+    <button class="lf-rs"><span data-t="ps_rs">RESTORE PURCHASE</span></button>
+    <p class="lf-legal" data-t="ps_lg">Payment will be charged to your Apple ID account at the confirmation of purchase. Subscription automatically renews unless it is canceled at least 24 hours before the end of the current period.</p>
+    <button class="lf-cta lf-wide" style="margin-top:auto" data-go="signup"><span data-show="plan:year"><span data-t="pw_cta">START MY FREE TRIAL</span></span><span data-show="plan:month"><span data-t="ps_cta">CONTINUE</span></span></button>
+  </div>
+</section>
+
+<section class="scr sheet" data-id="offer">
+  <div class="lf-sh">
+    <div class="lf-grab"></div>
+    <button class="lf-x" data-go="signup" aria-label="Close">✕</button>
+    <p class="lf-k" data-t="of_k">Before you go</p>
+    <h1 class="lf-oh" data-t="of_h">A whole year of LyricFluent for half the price</h1>
+    <div class="lf-big"><b><span data-t="of_p">$29.99</span></b><span data-t="of_pm">Yearly Plan · $2.50 per month</span><s><span data-t="of_was">Regular Yearly Plan $59.99</span></s></div>
+    <p class="lf-oc" data-t="of_c">Every song and every language, the same as Premium. This price is only shown once.</p>
+    <button class="lf-cta lf-wide" style="margin-top:auto" data-go="signup"><span data-t="of_cta">GET THE YEARLY PLAN</span></button>
+    <button class="lf-link" data-go="signup"><span data-t="of_no">No thanks</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="signup">
+  <div class="lf">
+    <div class="lf-hd"><b data-t="hd">GET STARTED</b></div>
+    <div class="lf-prog"><i style="width:100%"></i></div>
+    <div class="lf-ok"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7.5 12.3l3 3 6-6.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b data-t="su_ok">You're all set.</b><span data-t="su_ok2">Your purchase was successful.</span></div></div>
+    <h1 class="lf-ch" data-t="su_h">Create your profile</h1>
+    <p class="lf-s" data-t="su_s">Your profile is used to personalize your learning experience</p>
+    <div class="lf-sso">
+      <button><span data-t="su_a">Sign up with Apple</span></button>
+      <button><span data-t="su_g">Sign up with Google</span></button>
+      <button><span data-t="su_e">Sign up with Email</span></button>
+    </div>
+    <p class="lf-fine"><span data-t="su_f">By creating an account or signing in, you accept our <u>Privacy Policy</u> and <u>Terms of Service</u></span></p>
+  </div>
+</section>
+
+<section class="scr" data-id="today" data-aside>
+  <div class="lf">
+    <div class="lf-hd"><button class="lf-bk" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15.5 4 7.5 12l8 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><b>TRY PREMIUM</b></div>
+    <img class="lf-tart" src="assets/crop/globe-music.png" alt="">
+    <div class="lf-tr"><span class="lf-stars">★★★★★</span><p>Rated 4.9 ★ by thousands of learners</p></div>
+    <ul class="lf-tb">
+      <li><svg viewBox="0 0 24 24"><path d="M9 18V6l11-2v12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="2.6" fill="currentColor"/><circle cx="17.5" cy="16" r="2.6" fill="currentColor"/></svg><span>Learn Spanish with music you love</span></li>
+      <li><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z" fill="currentColor"/></svg><span>Various songs to fast-track your Spanish</span></li>
+      <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="currentColor"/><path d="M8 6c2 1 1 3 3 3.5s1 3-1 3.5-1 3 1 4.5M15 5c-1 2 1 3 2.5 3M17 14c-1.5 0-2 1.5-1 3" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg><span>Unlimited learning and all languages included</span></li>
+      <li><svg viewBox="0 0 24 24"><path d="M4 5h12v8a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z M16 7h2.5a2.5 2.5 0 0 1 0 5H16" fill="currentColor"/><path d="M3 20h15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Learn for the price of one coffee per month</span></li>
+      <li><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="currentColor"/><path d="M7.5 12.3l3 3 6-6.4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Easy to cancel anytime, no strings attached</span></li>
+    </ul>
+    <button class="lf-yr" style="margin-top:34px"><div><b>Yearly Plan</b><b>7 Days Free Trial</b><span>$59.99 <small>($5.00 per month)</small></span></div><svg viewBox="0 0 24 24"><path d="M9 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button class="lf-cta lf-wide" style="margin-top:auto">START MY FREE TRIAL</button>
+  </div>
+</section>
+
+<!-- SCREENS:END -->
+
+      </div></div>
+      <div class="au-pn" id="panel" aria-live="polite"></div>
+    </div>
+    <p class="au-hint">Tap the paywall’s back arrow to see idea 5. Switch to Español for a Spanish speaker learning English, with Spain prices.</p>
+    <!-- shown when CONTENT.liveUrl is set: assets/qr-app.png = qr.swift "<liveUrl>?app" -->
+    <div class="au-qr" id="qrCard" hidden><img src="assets/qr-app.png" alt="QR code that opens the prototype full screen"><div><b>Try it on your phone</b><p>Scan to open the prototype full screen, the way a new user would see it.</p></div></div>
+    <div class="au-mobw" id="qrMob" hidden><a class="au-btn" href="?app">Open it full screen</a></div>
+  </div>
+</section>
+
+<!-- the paywall TODAY vs PROPOSED — built from CONTENT.compare (stills: assets/hero/<today>.png, <proposed>.png) -->
+<section class="au-sec" id="compare" hidden><div class="au-wrap" id="cmpBody"></div></section>
+
+<footer class="au-foot" id="sources">
+  <div class="au-wrap">
+    <details id="srcDetails">
+      <summary>Where the numbers come from</summary>
+      <div class="au-srcs" id="srcBody"></div>
+    </details>
+    <p class="au-fine" id="fine"></p>
+    <div class="au-cta-line">
+      <p>Every screen here can be built and A/B tested in Adapty’s Flow Builder, with no app release.</p>
+      <a class="au-btn" href="https://adapty.io/flow-paywall-builder/" target="_blank" rel="noopener">About Flow Builder</a>
+    </div>
+  </div>
+</footer>
+
+<!-- extras: video dialog (CONTENT.video), ?app bar, ?tour overlay (CONTENT.tour) -->
+<dialog class="au-vid" id="vid" aria-label="Walkthrough video">
+  <div class="au-vid-in"><video id="vidEl" controls muted playsinline preload="none"></video></div>
+  <div class="au-vid-bar"><a id="vidDl" download>Download the MP4</a><button type="button" class="au-vid-x" id="vidX">Close</button></div>
+</dialog>
+<div class="au-scrim" id="abScrim"></div>
+<div class="au-appbar" id="appbar">
+  <button type="button" class="au-ab-why" id="abWhy"><i></i><span id="abT"></span><em>Why ↑</em></button>
+  <div class="au-lsw" id="abLang" role="group" aria-label="Language"></div>
+</div>
+<div class="au-tour" aria-hidden="true">
+  <div class="au-tb"><img src="assets/brand/appstore-icon.jpg" alt="">Growth Audit <small>· LyricFluent</small></div>
+  <div class="au-tby">Prepared by Adapty</div>
+  <div class="au-tcap" id="tCap"></div>
+  <div class="au-ttap" id="tTap"></div>
+  <div class="au-tprog"><i id="tProg"></i></div>
+  <div class="au-tintro" id="tIntro"></div>
+  <div class="au-tend" id="tEnd"></div>
+</div>
+
+<!-- CONTENT — all the audit's words and numbers, as data. Schema (brand-check enforces it):
+     ideas  : 3–5 rows, ranked (the audit is five ideas, never fifteen). screen = the screen that shows it.
+     panel  : one entry per screen. idea = its number in ideas (1-based) or 0 for a context screen.
+              why on an idea screen reads "<b>Try</b> X, <b>because</b> Y." in ≤ 45 words; iv = its range.
+              why on a context screen is one line saying what it sets up.
+     hero   : three screen ids shown as stills in the hero — run hero-stills.sh after the screens are done.
+     outcome: combined "up to" numbers, PS-deck style, never above the ceiling of the per-idea ranges.
+     sources: public facts only — App Store, their site, their screens. No sales research on this page.
+     EXTRAS (each one hides itself when left empty):
+     langs  : [{"code":"en","name":"English"},{"code":"es","name":"Español · Spain prices"}] — first = the markup's language
+     i18n   : {"es": {"<data-t key>": "text with {tokens}"}} — every data-t key, for every language after the first
+     prices : {"es": {"yr": "39,99 €", …}} — {tokens} in i18n strings; that storefront's real IAP prices
+     labelsI18n: {"es": {"goal": {"a": "…"}}} — C.labels per language (data-bind="label:…")
+     liveUrl: final Pages URL (QR card + video end card); the QR file encodes liveUrl + "?app"
+     video / poster: "assets/walkthrough.mp4" / "assets/walkthrough-poster.jpg" (record-video.sh)
+     compare: {today, proposed, kicker, title, sub, todayCap, rows:[{h, idea, was, now}], kept} — today = a data-aside screen
+     tour   : {segments:[{id, d, st, tap:[selector-in-screen, ms], pop, reveal, end}], captions:{id:{n|k, t, l, o, ol}},
+              introLede, endTitle} — ~30 s total; the last segment has end:true (the end card) -->
+<script type="application/json" id="content">
+{
+ "app": "LyricFluent",
+ "state": {
+  "target": "es",
+  "level": "a1",
+  "goal": [
+   "travel"
+  ],
+  "genre": "g1",
+  "plan": "year"
+ },
+ "labels": {
+  "target": {
+   "es": "Spanish",
+   "fr": "French",
+   "pt": "Portuguese",
+   "it": "Italian",
+   "de": "German",
+   "ko": "Korean",
+   "ru": "Russian",
+   "nl": "Dutch",
+   "en": "English"
+  },
+  "level": {
+   "a1": "A1",
+   "a2": "A2",
+   "b1": "B1/B2",
+   "c1": "C1/C2"
+  },
+  "goal": {
+   "travel": "Travel",
+   "abroad": "Living Abroad",
+   "fun": "Fun",
+   "culture": "Culture",
+   "career": "Career",
+   "education": "Education",
+   "family": "Family/Friends",
+   "relationship": "Relationship",
+   "brain": "Brain Training",
+   "curiosity": "Curiosity",
+   "other": "Other"
+  },
+  "genre": {
+   "g1": "Reggaeton",
+   "g2": "Dance",
+   "g3": "Regional Mexican",
+   "g4": "Salsa"
+  }
+ },
+ "chips": {
+  "welcome": "Welcome",
+  "lang": "Language",
+  "level": "Level",
+  "goal": "Motivation",
+  "genre": "Genre",
+  "progress": "After the lesson",
+  "plan": "Your plan",
+  "paywall": "Paywall",
+  "plans": "All plans",
+  "offer": "On close",
+  "signup": "Sign-up"
+ },
+ "hero": [
+  "plan",
+  "paywall",
+  "offer"
+ ],
+ "outcome": {
+  "cr": "+20%",
+  "arpu": "+17%"
+ },
+ "ideas": [
+  {
+   "screen": "plan",
+   "title": "Say their goal back to them",
+   "what": "You ask seven questions, including why they’re learning: travel, career, family. The plan screen plays back level, genre and artist, and the paywall tells every learner the same thing, <code>Learn Spanish with music you love</code>. Name the goal on both: <i>Your Spanish for travel starts today.</i>",
+   "impact": "+15–20%",
+   "il": "CR to purchase"
+  },
+  {
+   "screen": "progress",
+   "title": "Go from the lesson straight to the price",
+   "what": "Your sample lesson is the best screen in the flow. After it come 12 more screens, two age questions and a mandatory account before anyone sees a price. Move the account and the age setup past the paywall, so the lesson’s momentum reaches the offer.",
+   "impact": "+5–10%",
+   "il": "CR to purchase · ARPU +10–17%"
+  },
+  {
+   "screen": "plans",
+   "title": "Make the 66% saving impossible to miss",
+   "what": "<code>$59.99</code> a year is <code>$5.00</code> a month against <code>$14.99</code> on Monthly, 66% less. The paywall never says so, and Monthly only shows up after a tap. Put the saving on the yearly card and the comparison under it.",
+   "impact": "+10–15%",
+   "il": "ARPU, from more yearly plans"
+  },
+  {
+   "screen": "paywall",
+   "title": "Keep the proof where they decide, and explain the trial",
+   "what": "The 4.9 rating disappears the moment someone taps through to the plans, and <code>7 Days Free Trial</code> never says what happens on day 7. Keep the rating and one real review above the plan, and add a two-step Today → Day 7 line.",
+   "impact": "+5–10%",
+   "il": "CR to purchase"
+  },
+  {
+   "screen": "offer",
+   "title": "Catch the people who close the paywall",
+   "what": "Today the paywall’s back arrow simply leaves. Your store already lists a <code>$29.99</code> Yearly Plan: show it once, to the people who just said no to <code>$59.99</code>.",
+   "impact": "+10–15%",
+   "il": "ARPU"
+  }
+ ],
+ "panel": {
+  "welcome": {
+   "idea": 0,
+   "t": "Your welcome screen",
+   "why": "Kept word for word. It already says what makes LyricFluent different: language meets music."
+  },
+  "lang": {
+   "idea": 0,
+   "t": "Pick a language",
+   "why": "Kept as is. The language picked here names every later screen, down to the paywall headline."
+  },
+  "level": {
+   "idea": 0,
+   "t": "Level check",
+   "why": "Kept as is. The level comes back on the plan screen, as it does today."
+  },
+  "goal": {
+   "idea": 0,
+   "t": "Why they’re learning",
+   "why": "Kept as is. This is the answer that matters most, and today nothing after this screen mentions it. Idea 1 uses it."
+  },
+  "genre": {
+   "idea": 0,
+   "t": "Genre for the sample lesson",
+   "why": "Your sample lesson follows this pick, unchanged. It’s the strongest part of your flow, so we didn’t rebuild it here."
+  },
+  "progress": {
+   "idea": 2,
+   "t": "Go from the lesson straight to the price",
+   "why": "<b>Try</b> going from the end of the sample lesson straight to the plan and the paywall, with the account and the two age screens after it, <b>because</b> today 12 screens and a mandatory sign-up sit between the moment they enjoy LyricFluent and the price.",
+   "iv": "CR +5–10%",
+   "il": "to purchase · ARPU +10–17%",
+   "also": "Daily habit, daily goal and skills can stay. We left them out here only to keep the prototype short."
+  },
+  "plan": {
+   "idea": 1,
+   "t": "Say their goal back to them",
+   "why": "<b>Try</b> playing back the motivation they picked on the plan screen and in the paywall headline, <b>because</b> you ask seven questions, and today the paywall tells every learner the same thing: learn Spanish with music you love.",
+   "iv": "CR +15–20%",
+   "il": "to purchase",
+   "also": "Go back and pick a different motivation: the plan and the paywall headline change with it."
+  },
+  "paywall": {
+   "idea": 4,
+   "t": "Keep the proof and explain the trial",
+   "why": "<b>Try</b> your 4.9 rating, one real review and a two-step trial line right above the plan, <b>because</b> today the rating vanishes on the plan view, and nothing says what happens on day 7, which is where a trial starter hesitates.",
+   "iv": "CR +5–10%",
+   "il": "to purchase",
+   "also": "Also here: idea 1 (the headline names their goal) and idea 3 (the yearly card shows the saving). Tap the back arrow to see idea 5."
+  },
+  "plans": {
+   "idea": 3,
+   "t": "Make the 66% saving impossible to miss",
+   "why": "<b>Try</b> a Save 66% badge and a “vs $14.99 a month” line on the yearly card, <b>because</b> $59.99 a year is $5.00 a month, a third of Monthly, and today nobody sees that unless they do the maths.",
+   "iv": "ARPU +10–15%",
+   "il": "from more yearly plans · CR +5–15%",
+   "also": "The rating and their goal stay at the top, where today the plan view drops them."
+  },
+  "offer": {
+   "idea": 5,
+   "t": "Catch the people who close the paywall",
+   "why": "<b>Try</b> one offer when someone closes the paywall, your $29.99 Yearly Plan at half the regular price, <b>because</b> today the back arrow just leaves, and a one-time offer right after the onboarding paywall wins back people who said no.",
+   "iv": "ARPU +10–15%",
+   "il": "from people who closed the paywall"
+  },
+  "signup": {
+   "idea": 0,
+   "t": "Sign-up, after the purchase",
+   "why": "Your own sign-up screen, moved after the paywall (idea 2). Same copy, asked once they’ve already said yes."
+  }
+ },
+ "langs": [
+  {
+   "code": "en",
+   "name": "English"
+  },
+  {
+   "code": "es",
+   "name": "Español · Spain prices"
+  }
+ ],
+ "i18n": {
+  "es": {
+   "hd": "EMPEZAR",
+   "cont": "CONTINUAR",
+   "w_h": "Bienvenido a LyricFluent",
+   "w_tag": "Donde el idioma se une a la música",
+   "w_b1": "Aprende idiomas con la música que te gusta",
+   "w_b2": "Inglés, francés, portugués, español y 7 más",
+   "w_b3": "Entiende el argot real con canciones",
+   "w_b4": "Canta hasta hablar con confianza",
+   "w_b5": "Descubre a tu próximo artista favorito",
+   "w_cta": "EMPEZAR",
+   "w_si": "¿Ya tienes cuenta? Inicia sesión",
+   "l_h": "¿Qué idioma quieres aprender?",
+   "l_s": "¡La música lo hace divertido!",
+   "lv_h": "¿Cuánto <span data-bind=\"label:target\"></span> sabes?",
+   "lv_s": "¿Empiezas de cero, nivel medio o rey del karaoke?",
+   "lv1": "Empiezo de cero [A1]",
+   "lv2": "Sé algunas palabras comunes [A2]",
+   "lv3": "Puedo tener conversaciones básicas [B1/B2]",
+   "lv4": "Puedo hablar de muchos temas [C1/C2]",
+   "go_h": "¿Por qué quieres aprender <span data-bind=\"label:target\"></span>?",
+   "go_s": "Así personalizamos tu camino",
+   "g_travel": "Viajar",
+   "g_abroad": "Vivir fuera",
+   "g_fun": "Diversión",
+   "g_culture": "Cultura",
+   "g_career": "Carrera",
+   "g_education": "Estudios",
+   "g_family": "Familia/Amigos",
+   "g_relationship": "Pareja",
+   "g_brain": "Entrenar la mente",
+   "g_curiosity": "Curiosidad",
+   "g_other": "Otro",
+   "ge_h": "Elige un género para una lección de prueba",
+   "gt_g1": "POP",
+   "gt_g2": "ROCK",
+   "gt_g3": "HIP-HOP",
+   "gt_g4": "R&amp;B",
+   "gn_g1": "Pop",
+   "gn_g2": "Rock",
+   "gn_g3": "Hip-hop",
+   "gn_g4": "R&amp;B",
+   "pr_done": "Primera lección completada",
+   "pr_h": "Tu progreso potencial",
+   "pr_s": "Según tus respuestas, esto es lo que podrías conseguir",
+   "pr_l": "Palabras nuevas",
+   "pr_r": "Próximas 12 semanas",
+   "pr_f": "Ritmo estimado memorizando 1 canción por semana",
+   "pr_n": "Memoriza la letra y su traducción para fijar estas palabras",
+   "pl_h": "Tu plan personalizado",
+   "pl_s": "Creando tu plan de aprendizaje",
+   "pl_1": "Guardando tus preferencias",
+   "pl_lv": "Nivel:",
+   "pl_2": "Buscando tus canciones recomendadas",
+   "pl_3": "Preparando tu plan de aprendizaje",
+   "pl_3d": "¡Listo!",
+   "pl_k": "Tu plan",
+   "pl_r": "Tu plan personalizado está listo. ¡Vamos!",
+   "pw_hd": "PRUEBA PREMIUM",
+   "pw_rate": "Valorada con 4,8 · 161 valoraciones en el App Store",
+   "pw_rev": "“Acabo de estrenarla y me encanta. Me hace sentir bien.”",
+   "pw_revby": "Reseña del App Store, mayo de 2026",
+   "pw_b1": "Aprende <span data-bind=\"label:target\"></span> con la música que te gusta",
+   "pw_b2": "Aprendizaje ilimitado y todos los idiomas incluidos",
+   "pw_b3": "Cancela cuando quieras, sin compromiso",
+   "pw_save": "AHORRA 66 %",
+   "pw_yr": "Plan anual",
+   "pw_tr": "7 días de prueba gratis",
+   "pw_pr": "{yr} <small>({ymo} al mes)</small>",
+   "pw_t1": "Hoy",
+   "pw_t1d": "Todas las canciones e idiomas, sin pagar nada",
+   "pw_t2": "Día 7",
+   "pw_t2d": "{yr} por el año, salvo que canceles antes",
+   "pw_cta": "PROBAR 7 DÍAS GRATIS",
+   "pw_all": "VER TODOS LOS PLANES",
+   "ps_r": "<b>4,8</b> · 161 valoraciones",
+   "ps_vs": "frente a {mo} al mes en el plan mensual",
+   "ps_mo": "Plan mensual",
+   "ps_mp": "{mo}",
+   "ps_rs": "RESTAURAR COMPRA",
+   "ps_cta": "CONTINUAR",
+   "ps_lg": "El pago se cargará en tu cuenta de Apple al confirmar la compra. La suscripción se renueva automáticamente salvo que se cancele al menos 24 horas antes del final del periodo actual.",
+   "of_k": "Antes de irte",
+   "of_h": "Un año de LyricFluent a mitad de precio",
+   "of_p": "{off}",
+   "of_pm": "Plan anual · {offmo} al mes",
+   "of_was": "Plan anual normal: {yr}",
+   "of_c": "Todas las canciones y todos los idiomas, igual que Premium. Este precio solo se muestra una vez.",
+   "of_cta": "QUIERO EL PLAN ANUAL",
+   "of_no": "No, gracias",
+   "su_ok": "Todo listo.",
+   "su_ok2": "Tu compra se ha completado.",
+   "su_h": "Crea tu perfil",
+   "su_s": "Tu perfil sirve para personalizar tu aprendizaje",
+   "su_a": "Regístrate con Apple",
+   "su_g": "Regístrate con Google",
+   "su_e": "Regístrate con email",
+   "su_f": "Al crear una cuenta o iniciar sesión, aceptas nuestra <u>Política de privacidad</u> y los <u>Términos del servicio</u>"
+  }
+ },
+ "prices": {
+  "es": {
+   "yr": "39,99 €",
+   "ymo": "3,33 €",
+   "mo": "9,99 €",
+   "off": "19,99 €",
+   "offmo": "1,67 €"
+  }
+ },
+ "labelsI18n": {
+  "es": {
+   "target": {
+    "es": "español",
+    "fr": "francés",
+    "pt": "portugués",
+    "it": "italiano",
+    "de": "alemán",
+    "ko": "coreano",
+    "ru": "ruso",
+    "nl": "neerlandés",
+    "en": "inglés"
+   },
+   "goal": {
+    "travel": "Viajar",
+    "abroad": "Vivir fuera",
+    "fun": "Diversión",
+    "culture": "Cultura",
+    "career": "Carrera",
+    "education": "Estudios",
+    "family": "Familia/Amigos",
+    "relationship": "Pareja",
+    "brain": "Entrenar la mente",
+    "curiosity": "Curiosidad",
+    "other": "Otro"
+   },
+   "genre": {
+    "g1": "Pop",
+    "g2": "Rock",
+    "g3": "Hip-hop",
+    "g4": "R&B"
+   }
+  }
+ },
+ "liveUrl": "https://eddieatadapty.github.io/lyricfluent-flow-rebuild/",
+ "video": "assets/walkthrough.mp4",
+ "poster": "assets/walkthrough-poster.jpg",
+ "compare": {
+  "today": "today",
+  "proposed": "paywall",
+  "kicker": "The paywall, side by side",
+  "title": "Today and proposed.",
+  "sub": "Same screen, same prices. Five things change.",
+  "todayCap": "rebuilt from your iOS recording",
+  "rows": [
+   {
+    "h": "Headline",
+    "idea": 1,
+    "was": "None: “TRY PREMIUM” and an illustration",
+    "now": "“Your Spanish for travel starts today”, from their answer"
+   },
+   {
+    "h": "Proof",
+    "idea": 4,
+    "was": "“Rated 4.9 by thousands of learners”, gone on the plan view",
+    "now": "4.9 · 3K ratings and one real review, on both views"
+   },
+   {
+    "h": "Trial",
+    "idea": 4,
+    "was": "“7 Days Free Trial”, nothing about day 7",
+    "now": "Today: nothing to pay. Day 7: $59.99 for the year, unless they cancel"
+   },
+   {
+    "h": "Price",
+    "idea": 3,
+    "was": "$59.99 ($5.00 per month), nothing to compare it with",
+    "now": "Save 66%, and “vs $14.99 a month” on the plans view"
+   },
+   {
+    "h": "On close",
+    "idea": 5,
+    "was": "The back arrow leaves",
+    "now": "One offer: the $29.99 Yearly Plan"
+   }
+  ],
+  "kept": "Kept: your teal, your type, the TRY PREMIUM header, the plan card, the 7-day trial and START MY FREE TRIAL."
+ },
+ "tour": {
+  "introLede": "Five ideas to turn more learners into subscribers. <span>Built into your own onboarding.</span>",
+  "endTitle": "Five ideas, built into your own onboarding.",
+  "segments": [
+   {
+    "id": "welcome",
+    "d": 3200,
+    "tap": [
+     ".lf-cta",
+     2600
+    ]
+   },
+   {
+    "id": "lang",
+    "d": 2000,
+    "tap": [
+     ".lf-cta",
+     1500
+    ]
+   },
+   {
+    "id": "level",
+    "d": 1700,
+    "st": {
+     "level": "a1"
+    },
+    "tap": [
+     "[data-pick=\"level:a1\"]",
+     1100
+    ]
+   },
+   {
+    "id": "goal",
+    "d": 1300,
+    "st": {
+     "goal": []
+    },
+    "tap": [
+     "[data-toggle=\"goal:travel\"]",
+     900
+    ]
+   },
+   {
+    "id": "goal",
+    "d": 1300,
+    "st": {
+     "goal": [
+      "travel"
+     ]
+    },
+    "tap": [
+     ".lf-cta",
+     900
+    ]
+   },
+   {
+    "id": "genre",
+    "d": 2000,
+    "st": {
+     "genre": "g1"
+    },
+    "tap": [
+     ".lf-cta",
+     1500
+    ]
+   },
+   {
+    "id": "progress",
+    "d": 3000,
+    "pop": ".lf-done",
+    "tap": [
+     ".lf-cta",
+     2500
+    ]
+   },
+   {
+    "id": "plan",
+    "d": 3200,
+    "reveal": ".lf-sum",
+    "tap": [
+     ".lf-cta",
+     2700
+    ]
+   },
+   {
+    "id": "paywall",
+    "d": 3400,
+    "reveal": ".lf-tl",
+    "tap": [
+     ".lf-yr",
+     2900
+    ]
+   },
+   {
+    "id": "plans",
+    "d": 2800,
+    "pop": ".lf-save",
+    "tap": [
+     ".lf-bk",
+     2300
+    ]
+   },
+   {
+    "id": "paywall",
+    "d": 1300,
+    "tap": [
+     ".lf-bk",
+     800
+    ]
+   },
+   {
+    "id": "offer",
+    "d": 3000,
+    "tap": [
+     ".lf-cta",
+     2500
+    ]
+   },
+   {
+    "id": "signup",
+    "d": 2200
+   },
+   {
+    "id": "signup",
+    "d": 2900,
+    "end": true
+   }
+  ],
+  "captions": {
+   "welcome": {
+    "k": "Context",
+    "t": "Your onboarding, your design",
+    "l": "Every screen uses LyricFluent’s own colours, type and copy."
+   },
+   "lang": {
+    "k": "Context",
+    "t": "Same questions as today",
+    "l": "Language, level and motivation, kept as they are."
+   },
+   "level": {
+    "k": "Context",
+    "t": "Same questions as today",
+    "l": "Language, level and motivation, kept as they are."
+   },
+   "goal": {
+    "k": "Context",
+    "t": "The answer that matters",
+    "l": "Why they’re learning. Today nothing after this uses it."
+   },
+   "genre": {
+    "k": "Context",
+    "t": "Then your sample lesson",
+    "l": "Unchanged. It’s the strongest part of the flow."
+   },
+   "progress": {
+    "n": 2,
+    "t": "Lesson, then the price",
+    "l": "Account and age setup move after the paywall.",
+    "o": "CR +5–10%",
+    "ol": "to purchase · ARPU +10–17%"
+   },
+   "plan": {
+    "n": 1,
+    "t": "Say their goal back",
+    "l": "The plan and the paywall name the goal they picked.",
+    "o": "CR +15–20%",
+    "ol": "to purchase"
+   },
+   "paywall": {
+    "n": 4,
+    "t": "Proof and a clear trial",
+    "l": "Rating, a real review, and what happens on day 7.",
+    "o": "CR +5–10%",
+    "ol": "to purchase"
+   },
+   "plans": {
+    "n": 3,
+    "t": "Show the 66% saving",
+    "l": "$5.00 a month vs $14.99 on Monthly, on the card.",
+    "o": "ARPU +10–15%",
+    "ol": "from more yearly plans"
+   },
+   "offer": {
+    "n": 5,
+    "t": "Catch who closes",
+    "l": "One offer: your $29.99 Yearly Plan.",
+    "o": "ARPU +10–15%",
+    "ol": "from people who closed"
+   },
+   "signup": {
+    "k": "Context",
+    "t": "Sign-up, after the yes",
+    "l": "Same screen, now after the purchase."
+   }
+  }
+ },
+ "grounding": "Impact ranges are Adapty’s expected effect from teardowns and A/B tests across 30,000+ subscription apps, not measured lift for LyricFluent. They overlap, so they don’t add up.",
+ "sources": [
+  {
+   "group": "Prices",
+   "items": [
+    {
+     "dt": "$59.99 Yearly Plan with a 7-day trial · $14.99 Monthly Plan",
+     "dd": "Shown on your US onboarding paywall (iOS recording via ScreensDesign, Feb 2026) and listed under In-App Purchases on the <a href=\"https://apps.apple.com/us/app/lyricfluent-learn-spanish/id1626804408\" target=\"_blank\" rel=\"noopener\">US App Store</a>. $5.00 a month vs $14.99 = 66% less."
+    },
+    {
+     "dt": "$29.99 Yearly Plan (offer on close)",
+     "dd": "Listed under In-App Purchases on the US App Store. We don’t know where you use it today, so treat the offer as a question for you."
+    },
+    {
+     "dt": "Spain: 39,99 € Plan anual · 9,99 € 1 Month · 19,99 € Plan anual",
+     "dd": "Listed on the <a href=\"https://apps.apple.com/es/app/lyricfluent-aprende-ingl%C3%A9s/id1626804408\" target=\"_blank\" rel=\"noopener\">Spanish App Store</a>. We haven’t seen your Spanish paywall, so we paired 39,99 € with 9,99 €, the same ratio as the US pair (66% saving)."
+    },
+    {
+     "dt": "Not used",
+     "dd": "US: $49.99 and $59.99 (12 Months) yearly, $9.99 1 Month, $3.99 and $4.99 weekly. Spain: 24,99 €, 34,99 € and 69,99 € yearly, 1,99 € and 2,99 € weekly. Also listed; we read them as regional, legacy or test prices."
+    }
+   ]
+  },
+  {
+   "group": "Proof",
+   "items": [
+    {
+     "dt": "4.9 · 3K ratings",
+     "dd": "US App Store: 4.85 average from 3,000 ratings, shown as “3K Ratings” (Oct 2026). Your paywall already says “Rated 4.9”."
+    },
+    {
+     "dt": "4,8 · 161 valoraciones",
+     "dd": "Spanish App Store: 4.75 from 161 ratings (Oct 2026)."
+    },
+    {
+     "dt": "“Replaced doom scrolling with something I enjoy and learn from.”",
+     "dd": "5-star US App Store review, 25 April 2026, quoted word for word."
+    },
+    {
+     "dt": "“Acabo de estrenarla y me encanta. Me hace sentir bien.”",
+     "dd": "5-star Spanish App Store review, 14 May 2026, quoted word for word."
+    },
+    {
+     "dt": "100 → 565 words in 12 weeks",
+     "dd": "Your own “Your Potential Progress” screen, unchanged."
+    }
+   ]
+  },
+  {
+   "group": "Features and copy",
+   "items": [
+    {
+     "dt": "Welcome, language, level, motivation, genre, progress, plan, sign-up, paywall",
+     "dd": "Copy word for word from your iOS onboarding (ScreensDesign recording, Feb 2026), song counts included."
+    },
+    {
+     "dt": "New lines",
+     "dd": "“First lesson complete”, the goal headline, the plan summary, the trial line, “vs $14.99 a month” and the offer copy are ours."
+    },
+    {
+     "dt": "Spanish version",
+     "dd": "Our translation, not yours. Pop, Rock, Hip-hop and R&amp;B are stand-in genres: we haven’t seen your flow for Spanish speakers learning English."
+    }
+   ]
+  },
+  {
+   "group": "Design",
+   "items": [
+    {
+     "dt": "Colours",
+     "dd": "Teal #0e826f, illustration teal #14a58d, text #2a2a2a and the genre tile colours, sampled from your recorded screens."
+    },
+    {
+     "dt": "Type",
+     "dd": "Open Sans, the closest match to your in-app type. Your site blocked automated reads, so we couldn’t confirm it from your CSS."
+    },
+    {
+     "dt": "Art",
+     "dd": "The globe × music illustration is cut from your welcome screen. No artist photos or music-video stills: those are licensed, so genre tiles are plain colour."
+    }
+   ]
+  },
+  {
+   "group": "What we couldn’t see",
+   "items": [
+    {
+     "dt": "The sample lesson",
+     "dd": "Not rebuilt here, because it shows licensed lyrics. In the real flow it sits between Genre and the progress screen, unchanged."
+    },
+    {
+     "dt": "Trial reminders",
+     "dd": "We don’t know if you remind people before day 7, so the trial line doesn’t promise a reminder. If you do, say so on the screen."
+    },
+    {
+     "dt": "Your test history and Android flow",
+     "dd": "We worked from your iOS recording and App Store listing only."
+    }
+   ]
+  }
+ ]
+}
+</script>
+
+<script>
+/* LyricFluent: the goal they picked names the plan and the paywall; Spanish UI = Spanish speakers learning English */
+var GF = {
+  en: {travel: 'for travel', abroad: 'for living abroad', fun: 'for fun', culture: 'for the culture', career: 'for your career', education: 'for your studies', family: 'for family and friends', relationship: 'for your relationship', brain: 'to train your brain', curiosity: 'out of curiosity', other: 'your way'},
+  es: {travel: 'para viajar', abroad: 'para vivir fuera', fun: 'por diversión', culture: 'por la cultura', career: 'para tu carrera', education: 'para tus estudios', family: 'para tu familia y amigos', relationship: 'para tu pareja', brain: 'para entrenar la mente', curiosity: 'por curiosidad', other: 'a tu manera'}
+};
+function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+window.onSync = function(S){
+  var es = S.lang === 'es', g = (S.goal && S.goal[0]) || 'travel', L = C.labels;
+  var tg = L.target[S.target] || '', lv = L.level[S.level] || '', ge = L.genre[S.genre] || '', gw = (es ? GF.es : GF.en)[g];
+  var set = function(id, v){ var e = document.getElementById(id); if (e) e.textContent = v; };
+  set('pwHead', es ? 'Tu ' + tg + ' ' + gw + ' empieza hoy' : 'Your ' + tg + ' ' + gw + ' starts today');
+  set('planSum', cap(tg) + ' ' + gw + ' · ' + lv + ' · ' + ge);
+  set('planSongs', es ? 'Canciones de ' + ge + ' para nivel ' + lv : ge + ' songs for ' + lv);
+  set('plGoal', cap(tg) + ' ' + gw);
+};
+window.onLang = function(l){
+  if (l === 'es') S.target = 'en'; else if (S.target === 'en') S.target = 'es';
+  document.documentElement.lang = l; sync();
+};
+</script>
+<script>
+/* ============ engine — generic, do not fork per app ============ */
+var C = JSON.parse(document.getElementById('content').textContent);
+var S = C.state, scr = {}, ORDER = [], hist = [], cur = null, Q = location.search;
+var SHOT = /[?&](shot|phone|tour)\b/.test(Q), HERO = /[?&]hero\b/.test(Q);
+/* a screen with data-aside (e.g. the paywall TODAY for the side-by-side) renders for stills but is not part of the flow */
+document.querySelectorAll('.scr').forEach(function(s){ scr[s.dataset.id] = s; if (!s.hasAttribute('data-aside')) ORDER.push(s.dataset.id); });
+if (/[?&]shot\b/.test(Q)) document.documentElement.classList.add('shot');
+if (/[?&]phone\b/.test(Q)) document.documentElement.classList.add('shot', 'phoneonly');
+if (/[?&]clear\b/.test(Q)) document.documentElement.classList.add('clear');
+var IDEAS = (C.ideas || []).length;
+
+/* ---- languages: markup is the first language; C.i18n[lang][data-t key] the others; {tokens} from C.prices[lang] ---- */
+var LANGS = C.langs || [], BASE = LANGS.length ? LANGS[0].code : 'en', LANG_DONE = BASE, BASE_LABELS = JSON.parse(JSON.stringify(C.labels || {}));
+if (!S.lang) S.lang = BASE;
+function fillP(s, l){ var P = (C.prices || {})[l] || {}; return String(s).replace(/\{(\w+)\}/g, function(m, k){ return k in P ? P[k] : m; }); }
+function applyLang(){
+  var l = S.lang || BASE; if (l === LANG_DONE) return;
+  var T = (C.i18n || {})[l] || {};
+  document.querySelectorAll('.phone [data-t]').forEach(function(el){
+    if (el._base == null) el._base = el.innerHTML;
+    el.innerHTML = l === BASE || T[el.dataset.t] == null ? el._base : fillP(T[el.dataset.t], l);
+  });
+  C.labels = JSON.parse(JSON.stringify(BASE_LABELS));
+  var LL = (C.labelsI18n || {})[l] || {}; Object.keys(LL).forEach(function(k){ C.labels[k] = LL[k]; });
+  LANG_DONE = l;
+}
+function setLang(l){
+  if (!LANGS.some(function(x){ return x.code === l; })) return;
+  S.lang = l; sync();
+  document.querySelectorAll('[data-setlang]').forEach(function(b){ b.classList.toggle('on', b.dataset.setlang === l); });
+  if (window.onLang) window.onLang(l);
+}
+
+function lab(key){ var v = S[key]; var L = C.labels[key]; if (Array.isArray(v)) return v.map(function(x){ return L && L[x] || x; }).join(', '); return (L && L[v]) || v; }
+function sync(){
+  applyLang();
+  document.querySelectorAll('[data-bind]').forEach(function(el){
+    var b = el.dataset.bind, m = b.split(':');
+    el.textContent = m[0] === 'label' ? lab(m[1]) : m[0] === 'count' ? (S[m[1]] || []).length : (S[b] == null ? '' : S[b]);
+  });
+  document.querySelectorAll('[data-pick]').forEach(function(el){ var p = el.dataset.pick.split(':'); el.classList.toggle('on', S[p[0]] === p[1]); });
+  document.querySelectorAll('[data-toggle]').forEach(function(el){ var p = el.dataset.toggle.split(':'); el.classList.toggle('on', (S[p[0]] || []).indexOf(p[1]) > -1); });
+  document.querySelectorAll('[data-requires]').forEach(function(el){ el.disabled = !(S[el.dataset.requires] || []).length; });
+  document.querySelectorAll('[data-show]').forEach(function(el){ var p = el.dataset.show.split(':'); el.style.display = String(S[p[0]]) === p[1] ? '' : 'none'; });
+  if (window.onSync) window.onSync(S);
+}
+function show(id, dir){
+  var from = scr[cur], to = scr[id]; if (!to || id === cur) return;
+  var sheet = to.classList.contains('sheet');
+  if (from){
+    from.classList.remove('is-active');
+    if (sheet) from.classList.add('under');                                   /* a sheet slides up over the screen that opened it */
+    else if (dir === 'fwd' && !from.classList.contains('sheet')) from.classList.add('is-past');
+  }
+  if (!sheet) Object.keys(scr).forEach(function(k){ var u = scr[k]; if (u !== to && u.classList.contains('under')) { u.classList.remove('under'); if (dir === 'fwd') u.classList.add('is-past'); } });
+  to.classList.remove('is-past', 'under'); to.classList.add('is-active'); cur = id;
+  paint(); if (window.onEnter) window.onEnter(id, S);
+}
+function go(id){ if (cur) hist.push(cur); show(id, 'fwd'); }
+function back(){ if (hist.length) { var p = hist.pop(); scr[cur].classList.remove('is-active'); show(p, 'back'); } }
+function jump(id){
+  Object.keys(scr).forEach(function(k){ scr[k].classList.add('nofx'); scr[k].classList.remove('is-active', 'is-past', 'under'); });
+  var i = ORDER.indexOf(id); hist = ORDER.slice(0, i < 0 ? 0 : i); cur = null;
+  ORDER.slice(0, i).forEach(function(k){ if (!scr[k].classList.contains('sheet')) scr[k].classList.add('is-past'); });
+  if (scr[id] && scr[id].classList.contains('sheet')) {                        /* jumping to a sheet: its opener stays visible under it */
+    for (var j = i - 1; j >= 0; j--) if (!scr[ORDER[j]].classList.contains('sheet')) { scr[ORDER[j]].classList.remove('is-past'); scr[ORDER[j]].classList.add('under'); break; }
+  }
+  show(id, 'jump');
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ Object.keys(scr).forEach(function(k){ scr[k].classList.remove('nofx'); }); }); });
+}
+function stepBy(d){ var i = ORDER.indexOf(cur) + d; if (i >= 0 && i < ORDER.length) jump(ORDER[i]); }
+function jumpTo(id){
+  var p = document.getElementById('prototype');
+  if (p && !document.documentElement.classList.contains('appmode')) p.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'});
+  jump(id);
+}
+function paint(){
+  sync();
+  var c = document.getElementById('chips');
+  if (!c.childElementCount) ORDER.forEach(function(id){
+    var p = C.panel[id] || {}, b = document.createElement('button');
+    b.className = 'au-chip'; b.type = 'button'; b.dataset.id = id; b.setAttribute('role', 'tab');
+    b.innerHTML = (p.idea ? '<i>' + p.idea + '</i>' : '') + ((C.chips && C.chips[id]) || id);
+    b.onclick = function(){ jump(id); };
+    c.appendChild(b);
+  });
+  c.querySelectorAll('.au-chip').forEach(function(b){ var on = b.dataset.id === cur; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+  var d = C.panel[cur] || {t: cur, why: ''}, n = ORDER.indexOf(cur) + 1;
+  document.getElementById('panel').innerHTML =
+    (d.idea ? '<div class="au-pn-k"><i></i>Idea ' + d.idea + ' of ' + IDEAS + '</div>' : '<div class="au-pn-k au-ctx"><i></i>Context</div>') +
+    '<h3 class="au-pn-t">' + d.t + '</h3><p class="au-pn-h">' + d.why + '</p>' +
+    (d.iv ? '<div class="au-pn-o"><div class="au-lab">Potential outcome · based on Adapty data</div><div class="au-val"><mark>' + d.iv + '</mark></div><div class="au-sub">' + (d.il || '') + '</div></div>' : '') +
+    (d.also ? '<p class="au-pn-a">' + d.also + '</p>' : '') +
+    '<div class="au-pn-nav"><button type="button" onclick="stepBy(-1)"' + (n <= 1 ? ' disabled' : '') + '>‹ Previous</button><span>Screen ' + n + ' of ' + ORDER.length + '</span><button type="button" onclick="stepBy(1)"' + (n === ORDER.length ? ' disabled' : '') + '>Next ›</button></div>';
+  var ab = document.getElementById('abT'); if (ab) ab.textContent = (d.idea ? 'Idea ' + d.idea + ' of ' + IDEAS + ' · ' : '') + (d.t || '');
+}
+document.addEventListener('click', function(e){
+  var j = e.target.closest('[data-jumpto]'); if (j){ e.preventDefault(); jumpTo(j.dataset.jumpto); return; }
+  var L = e.target.closest('[data-setlang]'); if (L){ setLang(L.dataset.setlang); return; }
+  if (e.target.closest('[data-langtoggle]') && LANGS.length > 1){ var k = LANGS.findIndex(function(x){ return x.code === S.lang; }); setLang(LANGS[(k + 1) % LANGS.length].code); return; }
+  var el = e.target.closest('[data-go],[data-back],[data-pick],[data-toggle]'); if (!el) return;
+  if (el.dataset.pick){ var p = el.dataset.pick.split(':'); S[p[0]] = p[1]; sync(); if (el.dataset.advance) setTimeout(function(){ go(el.dataset.advance); }, 170); return; }
+  if (el.dataset.toggle){ var q = el.dataset.toggle.split(':'), a = S[q[0]] = S[q[0]] || [], i = a.indexOf(q[1]); if (i > -1) a.splice(i, 1); else a.push(q[1]); sync(); return; }
+  if ('back' in el.dataset) return back();
+  go(el.dataset.go);
+});
+document.querySelectorAll('[data-input]').forEach(function(inp){
+  inp.value = S[inp.dataset.input] || ''; inp.addEventListener('input', function(){ S[inp.dataset.input] = inp.value.trim() || 'there'; sync(); });
+});
+function $(id){ return document.getElementById(id); }
+
+/* hero stills, shortlist, outcome, sources — from CONTENT */
+$('heroPhones').innerHTML = (C.hero || []).map(function(id, i){
+  var pos = ['l', 'c', 'r'][i] || 'r', t = (C.chips && C.chips[id]) || id;
+  return '<button class="au-hp au-' + pos + '" data-jumpto="' + id + '" aria-label="Open ' + t + '"><img src="assets/hero/' + id + '.png" alt=""></button>';
+}).join('');
+$('ideaList').innerHTML = (C.ideas || []).map(function(r, i){
+  return '<article class="au-idea"><div class="au-num">0' + (i + 1) + '</div><div><h3>' + r.title + '</h3><p>' + r.what + '</p>' +
+    '<button type="button" class="au-lnk" data-jumpto="' + r.screen + '">See it on the screen</button></div>' +
+    '<div class="au-imp"><div class="au-v"><mark>' + r.impact + '</mark></div><div class="au-l">' + r.il + '</div></div></article>';
+}).join('');
+var O = C.outcome || {};
+$('bandNums').innerHTML =
+  (O.cr ? '<div><small>up to</small><b>' + O.cr + '</b><span>CR to purchase</span></div>' : '') +
+  (O.arpu ? '<div><small>up to</small><b>' + O.arpu + '</b><span>ARPU</span></div>' : '');
+$('bandFn').textContent = C.grounding;
+$('fine').textContent = C.grounding + ' Prepared by Adapty.';
+$('srcBody').innerHTML = C.sources.map(function(g){
+  return '<div><h4>' + g.group + '</h4><dl>' + g.items.map(function(it){ return '<dt>' + it.dt + '</dt><dd>' + it.dd + '</dd>'; }).join('') + '</dl></div>';
+}).join('');
+function openSrc(){ var d = $('srcDetails'); d.open = true; d.scrollIntoView({block: 'start'}); }
+
+/* ---- extras: language control, the paywall side by side, QR / phone view, the video ---- */
+if (LANGS.length > 1) {
+  $('langRow').hidden = false;
+  var lb = LANGS.map(function(x){ return '<button type="button" data-setlang="' + x.code + '">' + x.name + '</button>'; }).join('');
+  $('langSw').innerHTML = lb;
+  $('abLang').innerHTML = LANGS.map(function(x){ return '<button type="button" data-setlang="' + x.code + '">' + x.code.toUpperCase() + '</button>'; }).join('');
+}
+var CM = C.compare;
+if (CM && scr[CM.today] && scr[CM.proposed]) {
+  $('compare').hidden = false; $('navCompare').hidden = false;
+  $('cmpBody').innerHTML = '<div class="au-ideas-h"><p class="au-kicker">' + (CM.kicker || 'The paywall, side by side') + '</p><h2 class="au-h2">' + (CM.title || 'Today and proposed.') + (CM.sub ? ' <span>' + CM.sub + '</span>' : '') + '</h2></div>' +
+    '<div class="au-cmp"><figure><img src="assets/hero/' + CM.today + '.png" alt="Your paywall today"><figcaption>Today <span>· ' + (CM.todayCap || 'rebuilt from your recording') + '</span></figcaption></figure>' +
+    '<ol class="au-chg">' + (CM.rows || []).map(function(r){
+      return '<li><h4>' + r.h + (r.idea ? ' <i>Idea ' + r.idea + '</i>' : '') + '</h4><span class="au-was"><em>Today</em>' + r.was + '</span><span class="au-now"><em>Proposed</em>' + r.now + '</span></li>';
+    }).join('') + '</ol>' +
+    '<figure><button type="button" class="au-cmp-go" data-jumpto="' + CM.proposed + '" aria-label="Open the proposed paywall"><img src="assets/hero/' + CM.proposed + '.png" alt="The proposed paywall"></button><figcaption>Proposed <span>· tap to try it</span></figcaption></figure></div>' +
+    (CM.kept ? '<p class="au-kept">' + CM.kept + '</p>' : '');
+}
+if (C.liveUrl) { $('qrCard').hidden = false; $('qrMob').hidden = false; }
+if (/[?&]app\b/.test(Q)) {
+  var H0 = document.documentElement; H0.classList.add('appmode');
+  var openP = function(o){ H0.classList.toggle('au-open', o); $('abWhy').querySelector('em').textContent = o ? 'Close ↓' : 'Why ↑'; };
+  $('abWhy').onclick = function(){ openP(!H0.classList.contains('au-open')); };
+  $('abScrim').onclick = function(){ openP(false); };
+}
+if (C.video) {
+  var dlg = $('vid'), vel = $('vidEl'); vel.src = C.video; if (C.poster) vel.poster = C.poster; $('vidDl').href = C.video;
+  $('heroVideo').hidden = false;
+  $('heroVideo').onclick = function(){ dlg.showModal(); vel.play().catch(function(){}); };
+  $('vidX').onclick = function(){ dlg.close(); };
+  dlg.addEventListener('close', function(){ vel.pause(); });
+  dlg.addEventListener('click', function(e){ if (e.target === dlg) dlg.close(); });
+}
+
+/* ---- ?tour: a deterministic walkthrough from C.tour — tourAt(ms) paints one frame; record-video.sh records it ---- */
+function tourInit(){
+  var T = C.tour, H = document.documentElement, TR = T.transition || 360;
+  H.classList.add('tourmode', 'shot'); document.body.classList.add('nofx');
+  var SEG = T.segments, START = [], STATE = [], UNDER = [], acc = 0, st = JSON.parse(JSON.stringify(C.state));
+  SEG.forEach(function(s, i){
+    START.push(acc); acc += s.d;
+    Object.keys(s.st || {}).forEach(function(k){ st[k] = s.st[k]; }); STATE.push(JSON.parse(JSON.stringify(st)));
+    var u = null; if (scr[s.id].classList.contains('sheet')) for (var j = i - 1; j >= 0; j--) if (!scr[SEG[j].id].classList.contains('sheet')) { u = SEG[j].id; break; }
+    UNDER.push(u);
+  });
+  var TOTAL = acc, capEl = $('tCap'), tap = $('tTap'), pressed = null, popped = [];
+  $('tIntro').innerHTML = '<p class="au-eyebrow"><i></i>' + document.querySelector('.au-top-hero .au-eyebrow').textContent + '</p><h1 class="au-display">' + C.app + '</h1>' +
+    '<p class="au-lede">' + (T.introLede || document.querySelector('.au-top-hero .au-lede').innerHTML) + '</p>';
+  $('tEnd').innerHTML = '<p class="au-eyebrow"><i></i>Growth Audit · ' + C.app + '</p><h2 class="au-te-h">' + (T.endTitle || 'Five ideas, built into your own onboarding.') + '</h2>' +
+    '<div class="au-te-n">' + (O.cr ? '<div><small>up to</small><b>' + O.cr + '</b><span>CR to purchase</span></div>' : '') + (O.arpu ? '<div><small>up to</small><b>' + O.arpu + '</b><span>ARPU</span></div>' : '') + '</div>' +
+    (C.liveUrl ? '<div class="au-te-q"><img src="assets/qr-app.png" alt=""><div><b>Try it on your phone</b><span>' + C.liveUrl.replace(/^https?:\/\//, '').replace(/\/$/, '') + '</span></div></div>' : '') +
+    '<p class="au-te-f">' + C.grounding + '</p>';
+  function ease(x){ return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+  function easeBack(x){ var c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }
+  function capHTML(c){
+    c = c || {k: '', t: '', l: ''};
+    return '<div class="au-tk' + (c.n ? '' : ' au-ctx') + '"><i></i>' + (c.n ? 'Idea ' + c.n + ' of ' + IDEAS : (c.k || 'Context')) + '</div><h2 class="au-tt">' + c.t + '</h2><p class="au-tl">' + (c.l || '') + '</p>' +
+      (c.o ? '<div class="au-to"><small>Potential outcome · based on Adapty data</small><b><mark>' + c.o + '</mark></b><span>' + (c.ol || '') + '</span></div>' : '');
+  }
+  function place(id, tf, z){ scr[id].style.transform = tf; scr[id].style.zIndex = z; }
+  window.TOUR_MS = TOTAL;
+  window.tourAt = function(ms){
+    ms = Math.max(0, Math.min(TOTAL - 1, ms));
+    var i = 0; while (i < SEG.length - 1 && ms >= START[i + 1]) i++;
+    var s = SEG[i], local = ms - START[i], prev = i > 0 ? SEG[i - 1] : null;
+    Object.keys(STATE[i]).forEach(function(k){ S[k] = STATE[i][k]; }); sync();
+    var moving = prev && prev.id !== s.id && local < TR, p = moving ? ease(local / TR) : 1;
+    Object.keys(scr).forEach(function(k){ scr[k].classList.remove('is-active', 'is-past', 'under'); place(k, 'translateX(100%)', 0); });
+    var B = scr[s.id];
+    if (moving) {
+      if (B.classList.contains('sheet')) { place(prev.id, 'none', 1); B.style.transform = 'translateY(' + (1 - p) * 100 + '%)'; }
+      else {
+        var slide = 'translateX(' + (-28 * p) + '%)'; place(prev.id, slide, 1); B.style.transform = 'translateX(' + (1 - p) * 100 + '%)';
+        if (UNDER[i - 1]) place(UNDER[i - 1], slide, 0);
+      }
+    } else B.style.transform = 'none';
+    B.style.zIndex = 2;
+    if (UNDER[i] && !moving) place(UNDER[i], 'none', 1);
+    /* optional reveal: s.pop scales an element in, s.reveal fades one in a beat later */
+    popped.forEach(function(e){ e.style.transform = ''; e.style.opacity = ''; }); popped = [];
+    var q = Math.max(0, Math.min(1, (local - 250) / 550));
+    if (s.pop) { var pe = B.querySelector(s.pop); if (pe) { pe.style.transform = 'scale(' + (.55 + .45 * easeBack(q)) + ')'; pe.style.opacity = Math.min(1, q * 1.6); popped.push(pe); } }
+    if (s.reveal) { var re = B.querySelector(s.reveal); if (re) { re.style.opacity = Math.max(0, Math.min(1, (local - 520) / 300)); popped.push(re); } }
+    /* caption crossfades at screen changes; waits for the intro, gives way to the end card */
+    var key = s.id, op = 1;
+    if (moving) { if (p < .5) { key = prev.id; op = 1 - p * 2; } else op = p * 2 - 1; }
+    if (capEl.dataset.k !== key) { capEl.innerHTML = capHTML(T.captions[key]); capEl.dataset.k = key; }
+    var io = ms < 1100 ? 1 : Math.max(0, 1 - (ms - 1100) / 300), eo = s.end ? Math.min(1, local / 350) : 0;
+    capEl.style.opacity = op * Math.max(0, Math.min(1, (ms - 1400) / 300)) * (1 - eo);
+    /* the finger: fades in, taps, ripples out. Selectors are scoped to the screen */
+    tap.style.opacity = 0; if (pressed) { pressed.style.opacity = ''; pressed = null; }
+    if (s.tap) {
+      var el = B.querySelector(s.tap[0]), dt = local - s.tap[1];
+      if (el && dt > -260 && dt < 420) {
+        var r = el.getBoundingClientRect();
+        tap.style.left = (r.left + r.width / 2) + 'px'; tap.style.top = (r.top + r.height / 2) + 'px';
+        if (dt < 0) { tap.style.opacity = (dt + 260) / 260 * .9; tap.style.transform = 'scale(1)'; }
+        else { tap.style.opacity = .9 * (1 - dt / 420); tap.style.transform = 'scale(' + (1 + dt / 420 * .9) + ')'; }
+        if (dt >= 0 && dt < 160) { el.style.opacity = .72; pressed = el; }
+      }
+    }
+    $('tIntro').style.opacity = T.intro === false ? 0 : io;
+    $('tEnd').style.opacity = eo;
+    $('tProg').style.width = (ms / TOTAL * 100) + '%';
+    cur = s.id;
+    return i;
+  };
+  var tm = /[?&]t=(\d+)/.exec(Q); tourAt(tm ? +tm[1] : 0);
+}
+
+/* boot: #<screen-id> deep-links a screen (shoot.sh / hero-stills.sh use it); ?lang=xx picks the language */
+(function(){
+  var lm = /[?&]lang=(\w+)/.exec(Q); if (lm) setLang(lm[1]); else setLang(S.lang);
+  var h = location.hash.slice(1);
+  jump(scr[h] ? h : ORDER[0]);
+  if (scr[h] && !SHOT && !document.documentElement.classList.contains('appmode')) setTimeout(function(){ $('prototype').scrollIntoView(); }, 0);
+  if (/[?&]tour\b/.test(Q) && C.tour) tourInit();
+})();
+</script>
+</body>
+</html>
